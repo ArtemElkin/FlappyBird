@@ -27,7 +27,8 @@ namespace _Project.Features.Gameplay.Chunk
         {
             CheckFirstChunk();
         }
-
+        
+        // TODO: Переписать под новую логику, основанную на конфигах
         private void CheckFirstChunk()
         {
             var pos =  _firstChunkTransform.localPosition;
