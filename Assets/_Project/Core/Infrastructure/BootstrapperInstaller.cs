@@ -4,7 +4,7 @@ using Zenject;
 
 namespace _Project.Core.Infrastructure
 {
-    public class BootstrapInstaller : MonoInstaller
+    public class BootstrapperInstaller : MonoInstaller
     {
         [SerializeField] private GameObject _inputHandlerPrefab;
         
@@ -20,5 +20,7 @@ namespace _Project.Core.Infrastructure
                 .FromComponentInNewPrefab(_inputHandlerPrefab)
                 .AsSingle();
         }
+
+        
     }
 }
