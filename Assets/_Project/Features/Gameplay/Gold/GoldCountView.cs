@@ -1,0 +1,40 @@
+using _Project.Core.Data;
+using TMPro;
+using UnityEngine;
+using Zenject;
+
+namespace _Project.Features.Gameplay.Gold
+{
+    public class GoldCountView : MonoBehaviour
+    {
+        [SerializeField] private TextMeshProUGUI _goldText;
+        private PlayerModel _playerModel;
+
+        private void Awake()
+        {
+            _goldText = GetComponent<TextMeshProUGUI>();
+            UpdateGoldCountView(_playerModel.Gold);
+        }
+
+        private void OnEnable()
+        {
+            _playerModel.OnGoldChanged += UpdateGoldCountView;
+        }
+
+        private void UpdateGoldCountView(int value)
+        {
+            _goldText.text = value.ToString();
+        }
+
+        [Inject]
+        private void Construct(PlayerModel playerModel)
+        {
+            _playerModel = playerModel;
+        }
+
+        private void OnDisable()
+        {
+            _playerModel.OnGoldChanged -= UpdateGoldCountView;
+        }
+    }
+}
