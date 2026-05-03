@@ -7,7 +7,7 @@ namespace _Project.Core.Infrastructure.Config
 {
     public class JsonConfigProvider : IConfigProvider
     {
-        public T GetConfig<T>(string path)
+        public T GetConfig<T>(string path) where T : IConfig
         {
             TextAsset jsonConfig = Resources.Load<TextAsset>(path);
             if (jsonConfig == null)
