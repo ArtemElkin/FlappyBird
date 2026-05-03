@@ -1,0 +1,8 @@
+{
+  "moveSpeed": 8,
+  "pipePairsCount": 5,
+  "pipePairsInterval": 5,
+  "pipePairOffsetY": 3,
+  "startPositionX": 20,
+  "teleportationPositionX": -30
+}

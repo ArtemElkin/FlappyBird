@@ -1,31 +1,35 @@
-using _Project.Core.Tools;
 using _Project.Features.Gameplay.Pipe;
 using UnityEngine;
+
 
 namespace _Project.Features.Gameplay.Chunk
 {
     public class ChunkComponent : MonoBehaviour
     {
-        [SerializeField] private PipePairComponent[] _pipePairs;
-        private ChunkMovementController _movementController;
+        public PipePairComponent[] PipePairs => _pipePairs;
+        private PipePairComponent[] _pipePairs;
+        private ChunkMovementCalculator _movementCalculator;
         private PipePositionGenerator _pipePositionGenerator;
-        private CustomPool<PipePairComponent> _pipePairsPool;
         private ChunkConfig _config;
         
 
-        public void Initialize(ChunkConfig config, float initLocalPosX)
+        public void Setup(
+            ChunkConfig config, 
+            PipePairComponent[] pipePairs, 
+            PipePositionGenerator pipePositionGenerator,
+            ChunkMovementCalculator movementCalculator)
         {
             _config = config;
-            var chunkMovementController = new ChunkMovementController(_config.ChunkMoveSpeed);
-            var pipePositionGenerator = new PipePositionGenerator(_config.PipePairOffsetY);
-            transform.localPosition = new Vector3(initLocalPosX, transform.localPosition.y, transform.localPosition.z);
+            _pipePairs = pipePairs;
+            _pipePositionGenerator = pipePositionGenerator;
+            _movementCalculator = movementCalculator;
         }
 
-        public void RespawnPipes()
+        public void RespawnPipesPositions()
         {
             foreach (var pipePair in _pipePairs)
             {
-                var newPosY = _pipePositionGenerator.GenerateRandomPositionY();
+                var newPosY = _pipePositionGenerator.GenerateRandomPositionY(_config.pipePairOffsetY);
                 pipePair.SetNewLocalPositionY(newPosY);
                 pipePair.gameObject.SetActive(true);
             }
@@ -33,7 +37,7 @@ namespace _Project.Features.Gameplay.Chunk
 
         private void FixedUpdate()
         {
-            var newPos = _movementController.CalculateNewPosition(transform.localPosition, Time.fixedDeltaTime);
+            var newPos = _movementCalculator.CalculateNewPosition(transform.localPosition, _config.moveSpeed,Time.fixedDeltaTime);
             transform.localPosition = newPos;
         }
     }

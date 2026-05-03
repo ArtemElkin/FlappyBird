@@ -1,48 +1,53 @@
+using System;
 using System.Collections.Generic;
+using _Project.Core.Infrastructure.Config;
 using UnityEngine;
+using Zenject;
 
 namespace _Project.Features.Gameplay.Chunk
 {
-    public class ChunkTeleporter : MonoBehaviour
+    public class ChunkTeleporter : IInitializable, ITickable
     {
 
-        [SerializeField] private ChunkComponent[] _chunks;
-        [SerializeField] private float _speed;
-        private float _startPosX = 69.12f;
-        private float _endPosX = -34.56f;
-        private LinkedList<ChunkComponent> _linkedList;
+        private LinkedList<ChunkComponent> _chunksLinkedList;
         private Transform _firstChunkTransform;
+        private ChunkSpawner _chunkSpawner;
+        private ChunkConfig _chunkConfig;
+        private IConfigProvider _configProvider;
 
 
-        private void Awake()
+        public ChunkTeleporter(ChunkSpawner chunkSpawner, IConfigProvider configProvider)
         {
-            _linkedList = new LinkedList<ChunkComponent>();
-            _linkedList.AddLast(_chunks[0]);
-            _linkedList.AddLast(_chunks[1]);
-            _linkedList.AddLast(_chunks[2]);
-            _firstChunkTransform = _linkedList.First.Value.transform;
+            _chunkSpawner = chunkSpawner;
+            _configProvider = configProvider;
         }
-
-        private void FixedUpdate()
+        
+        public void Initialize()
+        {
+            _chunkConfig = _configProvider.GetConfig<ChunkConfig>("ChunkConfig");
+            _chunksLinkedList = _chunkSpawner.Chunks;
+            _firstChunkTransform = _chunksLinkedList.First.Value.transform;
+        }
+        
+        public void Tick()
         {
             CheckFirstChunk();
         }
         
-        // TODO: Переписать под новую логику, основанную на конфигах
         private void CheckFirstChunk()
         {
             var pos =  _firstChunkTransform.localPosition;
-            if (pos.x < _endPosX)
+            if (pos.x < _chunkConfig.teleportationPositionX)
             {
-                var tmp = _linkedList.First.Value;
-                pos.x = _linkedList.Last.Value.transform.localPosition.x + 34.56f;
+                var tmp = _chunksLinkedList.First.Value;
+                var posX = _chunksLinkedList.Last.Value.transform.localPosition.x + _chunkConfig.pipePairsInterval * _chunkConfig.pipePairsCount;
+                pos = new Vector3(posX, pos.y, pos.z);
                 _firstChunkTransform.localPosition = pos;
-                _linkedList.RemoveFirst();
-                _linkedList.AddLast(tmp);
-                tmp.RespawnPipes();
-                _firstChunkTransform =  _linkedList.First.Value.transform;
+                _chunksLinkedList.RemoveFirst();
+                _chunksLinkedList.AddLast(tmp);
+                tmp.RespawnPipesPositions();
+                _firstChunkTransform =  _chunksLinkedList.First.Value.transform;
             }
         }
-    
     }
 }

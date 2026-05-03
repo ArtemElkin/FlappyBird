@@ -1,47 +1,81 @@
 using System;
 using System.Collections.Generic;
+using _Project.Core.Infrastructure.Config;
 using _Project.Core.Tools;
 using _Project.Features.Gameplay.Pipe;
 using UnityEngine;
+using Zenject;
+
 
 namespace _Project.Features.Gameplay.Chunk
 {
-    public class ChunkSpawner
+    public class ChunkSpawner : IInitializable
     {
+        public LinkedList<ChunkComponent> Chunks => _chunks;
+        private LinkedList<ChunkComponent> _chunks;
         private ChunkConfig _config;
         private CustomPool<ChunkComponent> _chunkPool;
-        private PipePairSpawner _pipePairSpawner;
-        private ChunkComponent _chunkPrefab;
         private Transform _parentPath;
+        
+        private PipePairFactory _pipePairFactory;
+        private ChunkFactory _chunkFactory;
+        private IInstantiator _instantiator;
+        private IConfigProvider _configProvider;
+        private PipePositionGenerator _pipePositionGenerator;
+        private ChunkMovementCalculator _chunkMovementCalculator;
 
-
-        public ChunkSpawner(ChunkConfig config, ChunkComponent chunkPrefab, Transform parentPath)
+        
+        public ChunkSpawner(
+            IConfigProvider configProvider,
+            PipePairFactory pipePairFactory,
+            ChunkFactory chunkFactory,
+            Transform parentPath,
+            PipePositionGenerator pipePositionGenerator,
+            ChunkMovementCalculator chunkMovementCalculator)
         {
-            _config = config;
-            _chunkPrefab = chunkPrefab;
+            _configProvider = configProvider;
+            _pipePairFactory = pipePairFactory;
+            _chunkFactory = chunkFactory;
             _parentPath = parentPath;
-            _pipePairSpawner = new PipePairSpawner();
+            _pipePositionGenerator = pipePositionGenerator;
+            _chunkMovementCalculator = chunkMovementCalculator;
+        }
+        
+        public void Initialize()
+        {
+            _config = _configProvider.GetConfig<ChunkConfig>("ChunkConfig");
+            var chunksCount = 4;
+            _chunkFactory.Setup(_parentPath, chunksCount);
+            _chunks =  SpawnChunks(chunksCount, _config.pipePairsCount, _config.pipePairsInterval);
         }
 
-        public LinkedList<ChunkComponent> SpawnChunks(int count)
+        public LinkedList<ChunkComponent> SpawnChunks(int chunkCount, int pipePairsCount, float pipePairInterval)
         {
-            _chunkPool = new CustomPool<ChunkComponent>(_chunkPrefab, count, _parentPath);
-            var linkedList = new LinkedList<ChunkComponent>();
-            for (int i = 0; i < count; i++)
+            float chunkWidth = pipePairsCount * pipePairInterval;
+            float chunkOffsetX = (chunkWidth * chunkCount) / 2f;
+            float pipePairOffsetX = chunkWidth / 2f;
+            float lastPipePairWorldPosX = 0f;
+            
+            var chunksLinkedList = new LinkedList<ChunkComponent>();
+            
+            for (int i = 0; i < chunkCount; i++)
             {
-                var chunk =  _chunkPool.Get();
-
-                var last = linkedList.Last.Value;
-                var lastPosX = last == null ? 0f : last.transform.localPosition.x;
+                var chunkLocalPosX = i * chunkWidth + _config.startPositionX;
+                var chunk = _chunkFactory.Create(new Vector3(chunkLocalPosX, 0f, 0f));
+                var pipePairs = new PipePairComponent[_config.pipePairsCount];
                 
-                var newLocalPosX = lastPosX + _config.PipePairsCount * _config.PipePairInterval;
-                
-                chunk.Initialize(_config,newLocalPosX);
-                
-                linkedList.AddLast(_chunkPool.Get());
+                for (int k = 0; k < pipePairsCount; k++)
+                {
+                    var posX = k * pipePairInterval - ((pipePairsCount - 1) * pipePairInterval) / 2f;
+                    var posY = _pipePositionGenerator.GenerateRandomPositionY(_config.pipePairOffsetY);
+                    var pipePair = _pipePairFactory.Create(new Vector3(posX, posY, 0f), chunk.transform);
+                    pipePairs[k] = pipePair;
+                }
+                chunk.Setup(_config, pipePairs, _pipePositionGenerator, _chunkMovementCalculator);
+                chunksLinkedList.AddLast(chunk);
             }
             
-            return linkedList;
+            return chunksLinkedList;
         }
     }
 }

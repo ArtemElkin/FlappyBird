@@ -1,25 +1,22 @@
 using System;
 
+
 namespace _Project.Features.Gameplay.Pipe
 {
     public class PipePositionGenerator
     {
-        private float _offset;
-        private int _minYScaled;
-        private int _maxYScaled;
         private int _scale = 100;
+        private Random _random;
 
-        public PipePositionGenerator(float offset)
+        public PipePositionGenerator()
         {
-            _offset = offset;
-            _minYScaled = (int)(-_offset * _scale);
-            _maxYScaled = (int)(_offset * _scale);
-            
+            _random = new Random();
         }
-        public float GenerateRandomPositionY()
+        public float GenerateRandomPositionY(float maxOffsetY)
         {
-            Random random = new Random();
-            int newPosYScaled = random.Next(_minYScaled, _maxYScaled);
+            var minYScaled = (int)(-maxOffsetY * _scale);
+            var maxYScaled = (int)(maxOffsetY * _scale);
+            int newPosYScaled = _random.Next(minYScaled, maxYScaled);
             float newPosY = newPosYScaled / 1f / _scale;
             return newPosY;
         }
