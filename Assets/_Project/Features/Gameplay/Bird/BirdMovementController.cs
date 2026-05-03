@@ -6,7 +6,7 @@ using Zenject;
 
 namespace _Project.Features.Gameplay.Bird
 {
-    public class BirdMovementController : IJumpable, IDisposable
+    public class BirdMovementController : IJumpable, IInitializable, IDisposable
     {
         private IInputService _inputService;
         private float _currentVelocityY;
@@ -16,6 +16,10 @@ namespace _Project.Features.Gameplay.Bird
         public BirdMovementController(IInputService inputService)
         {
             _inputService = inputService;
+        }
+        
+        public void Initialize()
+        {
             _inputService.JumpPressed += Jump;
             _currentVelocityY = 0f;
         }
