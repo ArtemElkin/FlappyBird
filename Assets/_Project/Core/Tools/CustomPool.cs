@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zenject;
+
 
 namespace _Project.Core.Tools
 {
@@ -9,16 +11,18 @@ namespace _Project.Core.Tools
         private T _prefab;
         private List<T> _objects;
         private Transform _path;
+        private IInstantiator _instantiator;
 
-        public CustomPool(T prefab, int prewarmObjects, Transform path)
+        public CustomPool(IInstantiator instantiator, T prefab, int prewarmObjects, Transform path)
         {
+            _instantiator = instantiator;
             _prefab = prefab;
             _objects = new List<T>();
             _path = path;
 
             for (int i = 0; i < prewarmObjects; i++)
             {
-                var obj = GameObject.Instantiate(_prefab, _path);
+                var obj = _instantiator.InstantiatePrefabForComponent<T>(_prefab, _path);
                 obj.gameObject.SetActive(false);
                 _objects.Add(obj);
             }
@@ -44,7 +48,7 @@ namespace _Project.Core.Tools
 
         private T Create()
         {
-            var obj = GameObject.Instantiate(_prefab, _path);
+            var obj = _instantiator.InstantiatePrefabForComponent<T>(_prefab, _path);
             _objects.Add(obj);
             return obj;
         }
