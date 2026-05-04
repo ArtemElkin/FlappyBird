@@ -1,14 +1,17 @@
 using System;
+using Zenject;
 
 
 namespace _Project.Core.Data
 {
     public class PlayerModel
     {
+        public bool IsAlive { get; set; }
         public event Action<int> OnCurrentScoreChanged;
         public event Action<int> OnGoldChanged;
         private int _currentScore;
         private PlayerProgress _playerProgress;
+        private SignalBus _signalBus;
         
         public int MaxScore => _playerProgress.maxScore;
         public int Gold
@@ -35,7 +38,11 @@ namespace _Project.Core.Data
                 }
             }
         }
-        
+
+        public void SetAlive(bool isAlive)
+        {
+            IsAlive = isAlive;
+        }
         
         public void Setup(PlayerProgress playerProgress)
         {
