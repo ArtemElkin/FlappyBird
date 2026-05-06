@@ -1,6 +1,6 @@
 using System;
 
-namespace _Project.Features.Gameplay.Chunk.Pipe
+namespace _Project.Features.Gameplay.Chunk.PipePair
 {
     public class PipePositionGenerator
     {

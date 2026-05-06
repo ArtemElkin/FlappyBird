@@ -1,4 +1,5 @@
 using _Project.Core.Data;
+using _Project.Core.Signals;
 using _Project.Features.Gameplay.Coin;
 using _Project.Features.Gameplay.Score;
 using _Project.Features.Gameplay.Signals;
@@ -50,7 +51,7 @@ namespace _Project.Features.Gameplay.Bird
             }
             else if (collision.CompareTag(ObstacleTag))
             {
-                _signalBus.Fire(new BirdCrashedSignal());
+                _signalBus.Fire<GameOverSignal>();
             }
         }
     }

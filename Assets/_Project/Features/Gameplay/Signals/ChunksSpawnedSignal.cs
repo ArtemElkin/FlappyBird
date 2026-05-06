@@ -1,6 +1,6 @@
 namespace _Project.Features.Gameplay.Signals
 {
-    public class ChunkTeleportedSignal
+    public class ChunksSpawnedSignal
     {
         
     }

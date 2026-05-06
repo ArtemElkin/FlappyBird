@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using _Project.Core.Infrastructure.Config;
+using _Project.Core.Signals;
 using _Project.Core.Tools;
-using _Project.Features.Gameplay.Chunk.Pipe;
+using _Project.Features.Gameplay.Chunk.PipePair;
 using _Project.Features.Gameplay.Coin;
 using _Project.Features.Gameplay.Signals;
 using UnityEngine;
@@ -17,13 +18,12 @@ namespace _Project.Features.Gameplay.Chunk
         private LinkedList<ChunkComponent> _chunks;
         private ChunkConfig _config;
         private CustomPool<ChunkComponent> _chunkPool;
+        private readonly int _chunksCount = 4;
         private readonly Transform _parentPath;
         private readonly PipePairFactory _pipePairFactory;
         private readonly ChunkFactory _chunkFactory;
-        private readonly IInstantiator _instantiator;
         private readonly IConfigProvider _configProvider;
         private readonly PipePositionGenerator _pipePositionGenerator;
-        private readonly ChunkMovementCalculator _chunkMovementCalculator;
         private readonly SignalBus _signalBus;
         private readonly CoinFactory _coinFactory;
 
@@ -35,7 +35,6 @@ namespace _Project.Features.Gameplay.Chunk
             CoinFactory coinFactory,
             Transform parentPath,
             PipePositionGenerator pipePositionGenerator,
-            ChunkMovementCalculator chunkMovementCalculator,
             SignalBus signalBus)
         {
             _configProvider = configProvider;
@@ -44,19 +43,17 @@ namespace _Project.Features.Gameplay.Chunk
             _coinFactory = coinFactory;
             _parentPath = parentPath;
             _pipePositionGenerator = pipePositionGenerator;
-            _chunkMovementCalculator = chunkMovementCalculator;
             _signalBus = signalBus;
         }
         
         public void Initialize()
         {
             _signalBus.Subscribe<ChunkInTeleportZoneSignal>(OnChunkInTeleportZone);
+            _signalBus.Subscribe<GameStartedSignal>(OnGameStarted);
             
             _config = _configProvider.GetConfig<ChunkConfig>("ChunkConfig");
-            var chunksCount = 4;
-            _coinFactory.Setup(chunksCount * _config.pipePairsCount);
-            _chunkFactory.Setup(_parentPath, chunksCount);
-            _chunks =  SpawnChunks(chunksCount, _config.pipePairsCount, _config.pipePairsInterval);
+            _coinFactory.Setup(_chunksCount * _config.pipePairsCount);
+            _chunkFactory.Setup(_parentPath, _chunksCount);
         }
 
         public LinkedList<ChunkComponent> SpawnChunks(int chunkCount, int pipePairsCount, float pipePairInterval)
@@ -100,7 +97,7 @@ namespace _Project.Features.Gameplay.Chunk
             Chunks.RemoveFirst();
             Chunks.AddLast(chunk);
             RespawnChunk(chunk);
-            _signalBus.Fire<ChunkTeleportedSignal>();
+            _signalBus.Fire<FirstChunkChangedSignal>(new FirstChunkChangedSignal(newFirstChunk: Chunks.First.Value));
         }
         
         private void RespawnChunk(ChunkComponent chunk)
@@ -123,9 +120,16 @@ namespace _Project.Features.Gameplay.Chunk
             }
         }
 
+        private void OnGameStarted()
+        {
+            _chunks =  SpawnChunks(_chunksCount, _config.pipePairsCount, _config.pipePairsInterval);
+            _signalBus.Fire<FirstChunkChangedSignal>(new FirstChunkChangedSignal(newFirstChunk: Chunks.First.Value));
+        }
+
         public void Dispose()
         {
             _signalBus.Unsubscribe<ChunkInTeleportZoneSignal>(OnChunkInTeleportZone);
+            _signalBus.Unsubscribe<GameStartedSignal>(OnGameStarted);
         }
     }
 }

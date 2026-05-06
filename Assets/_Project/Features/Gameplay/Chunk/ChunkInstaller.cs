@@ -1,4 +1,4 @@
-using _Project.Features.Gameplay.Chunk.Pipe;
+using _Project.Features.Gameplay.Chunk.PipePair;
 using _Project.Features.Gameplay.Signals;
 using UnityEngine;
 using Zenject;
@@ -15,7 +15,7 @@ namespace _Project.Features.Gameplay.Chunk
         public override void InstallBindings()
         {
             Container.DeclareSignal<ChunkInTeleportZoneSignal>();
-            Container.DeclareSignal<ChunkTeleportedSignal>();
+            Container.DeclareSignal<FirstChunkChangedSignal>();
             
             BindPipePairFactory(_pipePairPrefab);
             BindChunkFactory(_chunkPrefab);

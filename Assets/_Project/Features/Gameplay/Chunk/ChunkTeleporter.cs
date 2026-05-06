@@ -12,14 +12,12 @@ namespace _Project.Features.Gameplay.Chunk
 
         private ChunkComponent _firstChunk;
         private ChunkConfig _chunkConfig;
-        private readonly ChunkSpawner _chunkSpawner;
         private readonly IConfigProvider _configProvider;
         private readonly SignalBus _signalBus;
 
 
         public ChunkTeleporter(ChunkSpawner chunkSpawner, IConfigProvider configProvider, SignalBus signalBus)
         {
-            _chunkSpawner = chunkSpawner;
             _configProvider = configProvider;
             _signalBus = signalBus;
         }
@@ -27,13 +25,13 @@ namespace _Project.Features.Gameplay.Chunk
         public void Initialize()
         {
             _chunkConfig = _configProvider.GetConfig<ChunkConfig>("ChunkConfig");
-            _firstChunk = _chunkSpawner.Chunks.First.Value;
-            _signalBus.Subscribe<ChunkTeleportedSignal>(OnChunkTeleported);
+            _signalBus.Subscribe<FirstChunkChangedSignal>(OnChunkTeleported);
+            // _signalBus.Subscribe<>
         }
 
-        private void OnChunkTeleported()
+        private void OnChunkTeleported(FirstChunkChangedSignal signal)
         {
-            _firstChunk = _chunkSpawner.Chunks.First.Value;
+            _firstChunk = signal.newFirstChunk;
         }
 
         public void Tick()
@@ -52,7 +50,7 @@ namespace _Project.Features.Gameplay.Chunk
 
         public void Dispose()
         {
-            _signalBus.Unsubscribe<ChunkTeleportedSignal>(OnChunkTeleported);
+            _signalBus.Unsubscribe<FirstChunkChangedSignal>(OnChunkTeleported);
         }
     }
 }

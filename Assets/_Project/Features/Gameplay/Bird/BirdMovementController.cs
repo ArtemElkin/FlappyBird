@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using _Project.Core.Input;
-using _Project.Features.Gameplay.States;
+using _Project.Features.Gameplay.Signals;
 using Zenject;
 
 namespace _Project.Features.Gameplay.Bird
@@ -15,26 +15,32 @@ namespace _Project.Features.Gameplay.Bird
         private readonly float _glideSpeed = 1.5f;
         private readonly float _glideAmount = 1.5f;
         private readonly IInputService _inputService;
-        private readonly BirdStateMachine _birdStateMachine;
+        private readonly SignalBus _signalBus;
         
 
-        public BirdMovementController(IInputService inputService, BirdStateMachine birdStateMachine)
+        public BirdMovementController(IInputService inputService, SignalBus signalBus)
         {
             _inputService = inputService;
-            _birdStateMachine = birdStateMachine;
+            _signalBus = signalBus;
         }
         
         public void Initialize()
         {
             _inputService.JumpPressed += Jump;
-            _currentVelocityY = 0f;
-            _isGliding = true;
+            Reset();
         }
 
         public void TakeOverControl()
         {
             _isGliding = false;
-            _birdStateMachine.EnterState<FlyingState>();
+            _signalBus.Fire<BirdActivatedSignal>();
+        }
+
+        public void Reset()
+        {
+            _isGliding = true;
+            _currentVelocityY = 0f;
+            _isGliding = true;
         }
         
         public void Jump()

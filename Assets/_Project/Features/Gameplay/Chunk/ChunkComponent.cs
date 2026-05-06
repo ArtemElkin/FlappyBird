@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using _Project.Core.Signals;
 using _Project.Features.Gameplay.Bird;
-using _Project.Features.Gameplay.Chunk.Pipe;
+using _Project.Features.Gameplay.Chunk.PipePair;
 using _Project.Features.Gameplay.Coin;
 using _Project.Features.Gameplay.Signals;
-using _Project.Features.Gameplay.States;
 using UnityEngine;
 using Zenject;
 
@@ -18,7 +18,6 @@ namespace _Project.Features.Gameplay.Chunk
         private List<CoinComponent> _golds;
         private List<PipePairComponent> _pipePairs;
         private ChunkMovementCalculator _movementCalculator;
-        private PipePositionGenerator _pipePositionGenerator;
         private ChunkConfig _config;
         private SignalBus _signalBus;
         private bool _movementIsActive;
@@ -26,15 +25,13 @@ namespace _Project.Features.Gameplay.Chunk
 
         [Inject]
         public void Construct(
-            PipePositionGenerator pipePositionGenerator,
             ChunkMovementCalculator movementCalculator,
             SignalBus signalBus)
         {
-            _pipePositionGenerator = pipePositionGenerator;
             _movementCalculator = movementCalculator;
             _signalBus = signalBus;
             _signalBus.Subscribe<BirdActivatedSignal>(ActivateMovement);
-            _signalBus.Subscribe<BirdCrashedSignal>(DeactivateMovement);;
+            _signalBus.Subscribe<GameOverSignal>(DeactivateMovement);;
         }
 
         public void Setup(ChunkConfig config, List<PipePairComponent> pipePairs, List<CoinComponent> golds)
@@ -64,7 +61,7 @@ namespace _Project.Features.Gameplay.Chunk
         public void Dispose()
         {
             _signalBus.Unsubscribe<BirdActivatedSignal>(ActivateMovement);
-            _signalBus.Unsubscribe<BirdCrashedSignal>(DeactivateMovement);
+            _signalBus.Unsubscribe<GameOverSignal>(DeactivateMovement);
         }
     }
 }
