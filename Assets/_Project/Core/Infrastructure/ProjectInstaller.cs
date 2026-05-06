@@ -2,6 +2,7 @@ using _Project.Core.Data;
 using _Project.Core.Infrastructure.Config;
 using _Project.Core.Infrastructure.Save;
 using _Project.Core.Input;
+using _Project.Core.Signals;
 using _Project.Core.States;
 using UnityEngine;
 using Zenject;
@@ -15,6 +16,9 @@ namespace _Project.Core.Infrastructure
         {
             // Биндинг лоад сервисов, sdk, сигнальной шины
             BindSignalBus();
+            Container.DeclareSignal<GameOverSignal>();
+            Container.DeclareSignal<GameStartedSignal>();
+            
             BindPlayerModel();
             BindSaveService();
             BindConfigProvider();
@@ -65,6 +69,10 @@ namespace _Project.Core.Infrastructure
             Container
                 .Bind<IGameState>()
                 .To<MenuState>()
+                .AsSingle();
+            Container
+                .Bind<IGameState>()
+                .To<LoadLevelState>()
                 .AsSingle();
             Container
                 .Bind<IGameState>()

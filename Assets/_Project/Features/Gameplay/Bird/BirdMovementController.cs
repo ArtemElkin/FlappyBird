@@ -16,6 +16,7 @@ namespace _Project.Features.Gameplay.Bird
         private readonly float _glideAmount = 1.5f;
         private readonly IInputService _inputService;
         private readonly BirdStateMachine _birdStateMachine;
+        
 
         public BirdMovementController(IInputService inputService, BirdStateMachine birdStateMachine)
         {

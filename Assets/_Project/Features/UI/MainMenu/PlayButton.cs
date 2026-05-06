@@ -5,7 +5,7 @@ using Zenject;
 
 namespace _Project.Features.UI.MainMenu
 {
-    public class PlayButtonView : MonoBehaviour
+    public class PlayButton : MonoBehaviour
     {
         private Button _button;
         private GameStateMachine _gameStateMachine;
@@ -27,7 +27,7 @@ namespace _Project.Features.UI.MainMenu
 
         private void OnButtonClick()
         {
-            _gameStateMachine.EnterState<GameplayState>();
+            _gameStateMachine.EnterState<LoadLevelState>();
         }
 
         private void OnDisable()
