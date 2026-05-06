@@ -1,26 +1,28 @@
 using _Project.Core.Data;
 using _Project.Core.Infrastructure.Config;
 using _Project.Core.Infrastructure.Save;
-using UnityEngine.SceneManagement;
+using _Project.Core.States;
 using Zenject;
 
 namespace _Project.Core.Infrastructure
 {
     public class Bootstrapper : IInitializable
     {
-        private IConfigProvider _configProvider;
-        private ISaveService _saveService;
-        private PlayerModel _playerModel;
+        private readonly IConfigProvider _configProvider;
+        private readonly ISaveService _saveService;
+        private readonly PlayerModel _playerModel;
+        private readonly GameStateMachine _gameStateMachine;
         
-        [Inject]
-        private void Construct(
+        public Bootstrapper(
             IConfigProvider configProvider,
             ISaveService saveService,
-            PlayerModel playerModel)
+            PlayerModel playerModel,
+            GameStateMachine gameStateMachine)
         {
             _configProvider = configProvider;
             _saveService = saveService;
             _playerModel = playerModel;
+            _gameStateMachine = gameStateMachine;
         }
 
         public void Initialize()
@@ -29,7 +31,7 @@ namespace _Project.Core.Infrastructure
             
             _playerModel.Setup(save);
 
-            SceneManager.LoadScene("MainMenu");
+            _gameStateMachine.EnterState<MenuState>();
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace _Project.Features.Gameplay.Bird
+namespace _Project.Features.Gameplay.Signals
 {
     public class BirdCrashedSignal
     {

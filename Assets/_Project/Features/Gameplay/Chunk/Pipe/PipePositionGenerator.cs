@@ -1,12 +1,11 @@
 using System;
 
-
-namespace _Project.Features.Gameplay.Pipe
+namespace _Project.Features.Gameplay.Chunk.Pipe
 {
     public class PipePositionGenerator
     {
         private int _scale = 100;
-        private Random _random;
+        private readonly Random _random;
 
         public PipePositionGenerator()
         {

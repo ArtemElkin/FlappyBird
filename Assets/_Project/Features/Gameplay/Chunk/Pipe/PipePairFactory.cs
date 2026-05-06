@@ -1,13 +1,12 @@
 using UnityEngine;
 using Zenject;
 
-
-namespace _Project.Features.Gameplay.Pipe
+namespace _Project.Features.Gameplay.Chunk.Pipe
 {
     public class PipePairFactory
     {
-        private PipePairComponent _pipePairPrefab;
-        private IInstantiator _instantiator;
+        private readonly PipePairComponent _pipePairPrefab;
+        private readonly IInstantiator _instantiator;
          
         
         public PipePairFactory(IInstantiator instantiator,PipePairComponent pipePairPrefab)

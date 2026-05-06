@@ -3,9 +3,9 @@ using TMPro;
 using UnityEngine;
 using Zenject;
 
-namespace _Project.Features.Gameplay.Gold
+namespace _Project.Features.Gameplay.Coin
 {
-    public class GoldCountView : MonoBehaviour
+    public class CoinCountView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _goldText;
         private PlayerModel _playerModel;

@@ -1,13 +1,14 @@
-using Unity.VisualScripting;
+using _Project.Core.States;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Zenject;
 
 namespace _Project.Features.UI.MainMenu
 {
     public class PlayButtonView : MonoBehaviour
     {
         private Button _button;
+        private GameStateMachine _gameStateMachine;
 
         private void Awake()
         {
@@ -18,9 +19,15 @@ namespace _Project.Features.UI.MainMenu
             _button.onClick.AddListener(OnButtonClick);
         }
 
+        [Inject]
+        public void Construct(GameStateMachine gameStateMachine)
+        {
+            _gameStateMachine = gameStateMachine;
+        }
+
         private void OnButtonClick()
         {
-            SceneManager.LoadScene("Game");
+            _gameStateMachine.EnterState<GameplayState>();
         }
 
         private void OnDisable()

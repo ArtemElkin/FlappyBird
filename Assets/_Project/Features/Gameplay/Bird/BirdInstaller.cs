@@ -1,4 +1,5 @@
-using _Project.Core.Data;
+using _Project.Features.Gameplay.Signals;
+using _Project.Features.Gameplay.States;
 using Zenject;
 
 namespace _Project.Features.Gameplay.Bird
@@ -7,11 +8,15 @@ namespace _Project.Features.Gameplay.Bird
     {
         public override void InstallBindings()
         {
-            BindBirdMovementController();
-            Container.DeclareSignal<BirdCrashedSignal>();
 
-            Container.BindSignal<BirdCrashedSignal>()
-                .ToMethod<PlayerModel>(model => model.SetAlive);
+            Container.DeclareSignal<BirdActivatedSignal>();
+            Container.DeclareSignal<BirdCrashedSignal>();
+            
+            Container.Bind<IBirdState>().To<IdleState>().AsSingle();
+            Container.Bind<IBirdState>().To<FlyingState>().AsSingle();
+            Container.Bind<BirdStateMachine >().AsSingle();
+
+            BindBirdMovementController();
         }
 
         private void BindBirdMovementController()

@@ -1,34 +1,41 @@
 using System;
 using System.Collections.Generic;
 using _Project.Core.Infrastructure.Config;
+using _Project.Features.Gameplay.Signals;
 using UnityEngine;
 using Zenject;
 
 namespace _Project.Features.Gameplay.Chunk
 {
-    public class ChunkTeleporter : IInitializable, ITickable
+    public class ChunkTeleporter : IInitializable, IDisposable, ITickable
     {
 
-        private LinkedList<ChunkComponent> _chunksLinkedList;
-        private Transform _firstChunkTransform;
-        private ChunkSpawner _chunkSpawner;
+        private ChunkComponent _firstChunk;
         private ChunkConfig _chunkConfig;
-        private IConfigProvider _configProvider;
+        private readonly ChunkSpawner _chunkSpawner;
+        private readonly IConfigProvider _configProvider;
+        private readonly SignalBus _signalBus;
 
 
-        public ChunkTeleporter(ChunkSpawner chunkSpawner, IConfigProvider configProvider)
+        public ChunkTeleporter(ChunkSpawner chunkSpawner, IConfigProvider configProvider, SignalBus signalBus)
         {
             _chunkSpawner = chunkSpawner;
             _configProvider = configProvider;
+            _signalBus = signalBus;
         }
         
         public void Initialize()
         {
             _chunkConfig = _configProvider.GetConfig<ChunkConfig>("ChunkConfig");
-            _chunksLinkedList = _chunkSpawner.Chunks;
-            _firstChunkTransform = _chunksLinkedList.First.Value.transform;
+            _firstChunk = _chunkSpawner.Chunks.First.Value;
+            _signalBus.Subscribe<ChunkTeleportedSignal>(OnChunkTeleported);
         }
-        
+
+        private void OnChunkTeleported()
+        {
+            _firstChunk = _chunkSpawner.Chunks.First.Value;
+        }
+
         public void Tick()
         {
             CheckFirstChunk();
@@ -36,18 +43,16 @@ namespace _Project.Features.Gameplay.Chunk
         
         private void CheckFirstChunk()
         {
-            var pos =  _firstChunkTransform.localPosition;
+            var pos =  _firstChunk.transform.localPosition;
             if (pos.x < _chunkConfig.teleportationPositionX)
             {
-                var tmp = _chunksLinkedList.First.Value;
-                var posX = _chunksLinkedList.Last.Value.transform.localPosition.x + _chunkConfig.pipePairsInterval * _chunkConfig.pipePairsCount;
-                pos = new Vector3(posX, pos.y, pos.z);
-                _firstChunkTransform.localPosition = pos;
-                _chunksLinkedList.RemoveFirst();
-                _chunksLinkedList.AddLast(tmp);
-                tmp.RespawnPipesPositions();
-                _firstChunkTransform =  _chunksLinkedList.First.Value.transform;
+                _signalBus.Fire<ChunkInTeleportZoneSignal>(new ChunkInTeleportZoneSignal(_firstChunk));
             }
+        }
+
+        public void Dispose()
+        {
+            _signalBus.Unsubscribe<ChunkTeleportedSignal>(OnChunkTeleported);
         }
     }
 }

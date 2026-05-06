@@ -11,7 +11,7 @@ namespace _Project.Core.Data
         public event Action<int> OnGoldChanged;
         private int _currentScore;
         private PlayerProgress _playerProgress;
-        private SignalBus _signalBus;
+        private readonly SignalBus _signalBus;
         
         public int MaxScore => _playerProgress.maxScore;
         public int Gold

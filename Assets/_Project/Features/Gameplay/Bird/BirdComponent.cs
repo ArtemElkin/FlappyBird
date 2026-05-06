@@ -1,6 +1,7 @@
 using _Project.Core.Data;
-using _Project.Features.Gameplay.Gold;
+using _Project.Features.Gameplay.Coin;
 using _Project.Features.Gameplay.Score;
+using _Project.Features.Gameplay.Signals;
 using UnityEngine;
 using Zenject;
 
@@ -8,10 +9,12 @@ namespace _Project.Features.Gameplay.Bird
 {
     public class BirdComponent : MonoBehaviour
     {
+        private const string CoinTag = "Coin";
+        private const string GapTag = "Gap";
+        private const string ObstacleTag = "Obstacle";
         private BirdMovementController _movementController;
         private Rigidbody2D _rb;
         private ScoreCounter _scoreCounter;
-        private GoldCollector _goldCollector;
         private SignalBus _signalBus;
         private PlayerModel _playerModel;
         
@@ -20,14 +23,12 @@ namespace _Project.Features.Gameplay.Bird
             BirdMovementController movementController,
             PlayerModel playerModel,
             ScoreCounter scoreCounter,
-            GoldCollector goldCollector,
             SignalBus signalBus)
         {
             _movementController = movementController;
             _playerModel = playerModel;
             _rb = GetComponent<Rigidbody2D>();
             _scoreCounter = scoreCounter;
-            _goldCollector = goldCollector;
             _signalBus = signalBus;
         }
 
@@ -39,15 +40,15 @@ namespace _Project.Features.Gameplay.Bird
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.CompareTag("Gold"))
+            if (collision.CompareTag(CoinTag))
             {
-                _goldCollector.CollectGold(1);
+                _signalBus.Fire<CoinCollectedSignal>(new CoinCollectedSignal(collision.gameObject.GetComponent<CoinComponent>()));
             }
-            else if (collision.CompareTag("Gap"))
+            else if (collision.CompareTag(GapTag))
             {
                 _scoreCounter.IncreaseCurrentScore();
             }
-            else if (collision.CompareTag("Obstacle"))
+            else if (collision.CompareTag(ObstacleTag))
             {
                 _signalBus.Fire(new BirdCrashedSignal());
             }

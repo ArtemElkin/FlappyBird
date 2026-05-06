@@ -1,5 +1,5 @@
 {
-  "moveSpeed": 8,
+  "moveSpeed": 2,
   "pipePairsCount": 5,
   "pipePairsInterval": 5,
   "pipePairOffsetY": 3,

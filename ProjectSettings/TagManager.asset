@@ -7,8 +7,8 @@ TagManager:
   - ship
   - asteroid
   - Obstacle
-  - Gold
   - Gap
+  - Coin
   layers:
   - Default
   - TransparentFX

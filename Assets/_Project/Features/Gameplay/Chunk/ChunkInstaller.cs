@@ -1,4 +1,5 @@
-using _Project.Features.Gameplay.Pipe;
+using _Project.Features.Gameplay.Chunk.Pipe;
+using _Project.Features.Gameplay.Signals;
 using UnityEngine;
 using Zenject;
 
@@ -6,17 +7,19 @@ namespace _Project.Features.Gameplay.Chunk
 {
     public class ChunkInstaller : MonoInstaller
     {
-        [SerializeField] private Transform _chunksParent;
+        [SerializeField] private Transform _chunksParentTransform;
         [SerializeField] private ChunkComponent _chunkPrefab;
         [SerializeField] private PipePairComponent _pipePairPrefab;
         
         
         public override void InstallBindings()
         {
+            Container.DeclareSignal<ChunkInTeleportZoneSignal>();
+            Container.DeclareSignal<ChunkTeleportedSignal>();
             
             BindPipePairFactory(_pipePairPrefab);
             BindChunkFactory(_chunkPrefab);
-            BindChunkSpawner(_chunksParent);
+            BindChunkSpawner(_chunksParentTransform);
             BindChunkTeleporter();
             BindChunkMovementController();
             BindPipePositionGenerator();

@@ -6,9 +6,9 @@ namespace _Project.Features.Gameplay.Chunk
 {
     public class ChunkFactory
     {
-        private ChunkComponent _chunkPrefab;
-        private IInstantiator _instantiator;
         private CustomPool<ChunkComponent> _chunkPool;
+        private readonly ChunkComponent _chunkPrefab;
+        private readonly IInstantiator _instantiator;
         
         public ChunkFactory(IInstantiator instantiator, ChunkComponent chunkPrefab)
         {
@@ -16,9 +16,9 @@ namespace _Project.Features.Gameplay.Chunk
             _chunkPrefab = chunkPrefab;
         }
 
-        public void Setup(Transform parentPath, int preWarmChunksCount)
+        public void Setup(Transform parentTransform, int preWarmChunksCount)
         {
-            _chunkPool = new CustomPool<ChunkComponent>(_instantiator, _chunkPrefab, preWarmChunksCount, parentPath);
+            _chunkPool = new CustomPool<ChunkComponent>(_instantiator, _chunkPrefab, preWarmChunksCount, parentTransform);
         }
 
         public ChunkComponent Create(Vector3 localPosition)

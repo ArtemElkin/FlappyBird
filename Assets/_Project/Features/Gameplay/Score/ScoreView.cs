@@ -23,7 +23,7 @@ namespace _Project.Features.Gameplay.Score
         }
 
         [Inject]
-        public void Construct(PlayerModel playerModel)
+        private void Construct(PlayerModel playerModel)
         {
             _playerModel = playerModel;
         }
