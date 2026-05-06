@@ -33,7 +33,7 @@ namespace _Project.Core.Infrastructure
         {
             Container
                 .Bind<ISaveService>()
-                .To<JsonSaveService>()
+                .To<PlayerPrefsSaveService>()
                 .AsSingle();
         }
         
@@ -41,7 +41,7 @@ namespace _Project.Core.Infrastructure
         {
             Container
                 .Bind<IConfigProvider>()
-                .To<JsonConfigProvider>()
+                .To<ResourcesConfigProvider>()
                 .AsSingle();
         }
         

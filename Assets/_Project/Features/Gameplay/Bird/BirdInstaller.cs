@@ -14,7 +14,7 @@ namespace _Project.Features.Gameplay.Bird
             
             Container.Bind<IBirdState>().To<IdleState>().AsSingle();
             Container.Bind<IBirdState>().To<FlyingState>().AsSingle();
-            Container.Bind<BirdStateMachine >().AsSingle();
+            Container.BindInterfacesAndSelfTo<BirdStateMachine >().AsSingle();
 
             BindBirdMovementController();
         }

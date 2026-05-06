@@ -10,8 +10,14 @@ namespace _Project.Features.Gameplay.States
     public class BirdStateMachine : BaseStateMachine<IBirdState>, IInitializable, IDisposable
     {
         private readonly SignalBus _signalBus;
-        
-        public BirdStateMachine(List<IBirdState> states, SignalBus signalBus) : base(states) => _signalBus = signalBus;
+        private readonly GameStateMachine _gameStateMachine;
+
+        public BirdStateMachine(List<IBirdState> states, SignalBus signalBus, GameStateMachine gameStateMachine) :
+            base(states)
+        {
+            _signalBus = signalBus;
+            _gameStateMachine = gameStateMachine;
+        }
 
         public void Initialize()
         {
@@ -20,11 +26,12 @@ namespace _Project.Features.Gameplay.States
 
         private void OnBirdCrashed()
         {
-            EnterState<>();
+            _gameStateMachine.EnterState<GameOverState>();
         }
 
         public void Dispose()
         {
+            _signalBus.Unsubscribe<BirdCrashedSignal>(OnBirdCrashed);
         }
     }
 }

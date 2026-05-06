@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _Project.Core.Infrastructure.Config
 {
-    public class JsonConfigProvider : IConfigProvider
+    public class ResourcesConfigProvider : IConfigProvider
     {
         public T GetConfig<T>(string path) where T : IConfig
         {

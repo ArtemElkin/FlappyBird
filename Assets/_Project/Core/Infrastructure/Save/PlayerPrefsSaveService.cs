@@ -4,13 +4,14 @@ using Newtonsoft.Json;
 
 namespace _Project.Core.Infrastructure.Save
 {
-    public class JsonSaveService : ISaveService
+    public class PlayerPrefsSaveService : ISaveService
     {
         private readonly string _path = "save.json";
         
         public void Save(ISave save)
         {
-            throw new System.NotImplementedException();
+            string json =  JsonConvert.SerializeObject(save);
+            PlayerPrefs.SetString(_path, json);
         }
 
         public T Load<T>() where T : ISave

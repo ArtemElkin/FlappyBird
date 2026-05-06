@@ -13,15 +13,15 @@ namespace _Project.Features.Gameplay.Coin
         private void Awake()
         {
             _goldText = GetComponent<TextMeshProUGUI>();
-            UpdateGoldCountView(_playerModel.Gold);
+            UpdateCoinsCountView(_playerModel.Coins);
         }
 
         private void OnEnable()
         {
-            _playerModel.OnGoldChanged += UpdateGoldCountView;
+            _playerModel.OnCoinsChanged += UpdateCoinsCountView;
         }
 
-        private void UpdateGoldCountView(int value)
+        private void UpdateCoinsCountView(int value)
         {
             _goldText.text = value.ToString();
         }
@@ -34,7 +34,7 @@ namespace _Project.Features.Gameplay.Coin
 
         private void OnDisable()
         {
-            _playerModel.OnGoldChanged -= UpdateGoldCountView;
+            _playerModel.OnCoinsChanged -= UpdateCoinsCountView;
         }
     }
 }

@@ -8,21 +8,21 @@ namespace _Project.Core.Data
     {
         public bool IsAlive { get; set; }
         public event Action<int> OnCurrentScoreChanged;
-        public event Action<int> OnGoldChanged;
+        public event Action<int> OnCoinsChanged;
         private int _currentScore;
         private PlayerProgress _playerProgress;
         private readonly SignalBus _signalBus;
         
         public int MaxScore => _playerProgress.maxScore;
-        public int Gold
+        public int Coins
         {
-            get => _playerProgress.gold;
+            get => _playerProgress.coins;
             set
             {
-                if (value != _playerProgress.gold)
+                if (value != _playerProgress.coins)
                 {
-                    _playerProgress.gold = value;
-                    OnGoldChanged?.Invoke(value);
+                    _playerProgress.coins = value;
+                    OnCoinsChanged?.Invoke(value);
                 }
             }
         }
@@ -38,6 +38,7 @@ namespace _Project.Core.Data
                 }
             }
         }
+        public PlayerProgress PlayerProgress => _playerProgress;
 
         public void SetAlive(bool isAlive)
         {
@@ -47,7 +48,7 @@ namespace _Project.Core.Data
         public void Setup(PlayerProgress playerProgress)
         {
             _playerProgress = playerProgress;
-            CurrentScore = 0;
+            ResetCurrentScore();
         }
         
         public void TryUpdateMaxScore(int newMaxScore)
@@ -70,14 +71,14 @@ namespace _Project.Core.Data
 
         public void AddGold(int amount)
         {
-            Gold += amount;
+            Coins += amount;
         }
 
         public bool TryRemoveGold(int amount)
         {
-            if (_playerProgress.gold >= amount)
+            if (Coins >= amount)
             {
-                _playerProgress.gold -= amount;
+                Coins -= amount;
                 return true;
             }
             return false;
