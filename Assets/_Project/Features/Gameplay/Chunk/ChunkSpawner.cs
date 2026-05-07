@@ -49,16 +49,18 @@ namespace _Project.Features.Gameplay.Chunk
         public void Initialize()
         {
             _signalBus.Subscribe<ChunkInTeleportZoneSignal>(OnChunkInTeleportZone);
-            _signalBus.Subscribe<GameStartedSignal>(OnGameStarted);
+            _signalBus.Subscribe<GameRestartedSignal>(OnGameRestarted);
             
             _config = _configProvider.GetConfig<ChunkConfig>("ChunkConfig");
             _coinFactory.Setup(_chunksCount * _config.pipePairsCount);
             _chunkFactory.Setup(_parentPath, _chunksCount);
+            
+            _chunks =  SpawnChunks(_chunksCount, _config.pipePairsCount, _config.pipePairsInterval);
         }
 
-        public LinkedList<ChunkComponent> SpawnChunks(int chunkCount, int pipePairsCount, float pipePairInterval)
+        public LinkedList<ChunkComponent> SpawnChunks(int chunkCount, int pipePairsCount, float pipePairsInterval)
         {
-            var chunkWidth = pipePairsCount * pipePairInterval;
+            var chunkWidth = pipePairsCount * pipePairsInterval;
             var chunksLinkedList = new LinkedList<ChunkComponent>();
             
             for (int i = 0; i < chunkCount; i++)
@@ -70,12 +72,12 @@ namespace _Project.Features.Gameplay.Chunk
                 
                 for (int k = 0; k < pipePairsCount; k++)
                 {
-                    var posX = k * pipePairInterval - ((pipePairsCount - 1) * pipePairInterval) / 2f;
+                    var posX = k * pipePairsInterval - ((pipePairsCount - 1) * pipePairsInterval) / 2f;
                     var posY = _pipePositionGenerator.GenerateRandomPositionY(_config.pipePairOffsetY);
                     var pipePair = _pipePairFactory.Create(new Vector3(posX, posY, 0f), chunk.transform);
                     pipePairs.Add(pipePair);
                     
-                    posX += pipePairInterval / 2f;
+                    posX += pipePairsInterval / 2f;
                     posY = _pipePositionGenerator.GenerateRandomPositionY(_config.pipePairOffsetY);
                     var gold = _coinFactory.Create(new Vector3(posX, posY, 0f), chunk.transform);
                     golds.Add(gold);
@@ -120,16 +122,29 @@ namespace _Project.Features.Gameplay.Chunk
             }
         }
 
-        private void OnGameStarted()
+        private void OnGameRestarted()
         {
-            _chunks =  SpawnChunks(_chunksCount, _config.pipePairsCount, _config.pipePairsInterval);
+            var chunkWidth = _config.pipePairsCount * _config.pipePairsInterval;
+            List<ChunkComponent> chunks = new List<ChunkComponent>();
+            foreach (var ch in Chunks)
+            {
+                chunks.Add(ch);
+            }
+            Chunks.Clear();
+            for (int i = 0; i < _chunksCount; i++)
+            {
+                var chunkLocalPosX = i * chunkWidth + _config.startPositionX;
+                chunks[i].transform.localPosition = new Vector3(chunkLocalPosX, 0f, 0f);
+                RespawnChunk(chunks[i]);
+                Chunks.AddLast(chunks[i]);
+            }
             _signalBus.Fire<FirstChunkChangedSignal>(new FirstChunkChangedSignal(newFirstChunk: Chunks.First.Value));
         }
 
         public void Dispose()
         {
             _signalBus.Unsubscribe<ChunkInTeleportZoneSignal>(OnChunkInTeleportZone);
-            _signalBus.Unsubscribe<GameStartedSignal>(OnGameStarted);
+            _signalBus.Unsubscribe<GameRestartedSignal>(OnGameRestarted);
         }
     }
 }

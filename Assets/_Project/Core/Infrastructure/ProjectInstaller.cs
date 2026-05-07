@@ -3,7 +3,7 @@ using _Project.Core.Infrastructure.Config;
 using _Project.Core.Infrastructure.Save;
 using _Project.Core.Input;
 using _Project.Core.Signals;
-using _Project.Core.States;
+using _Project.Core.Tools;
 using UnityEngine;
 using Zenject;
 
@@ -17,19 +17,22 @@ namespace _Project.Core.Infrastructure
             // Биндинг лоад сервисов, sdk, сигнальной шины
             BindSignalBus();
             Container.DeclareSignal<GameOverSignal>();
-            Container.DeclareSignal<GameStartedSignal>();
+            Container.DeclareSignal<GameRestartedSignal>();
+            Container.DeclareSignal<StartGameClickedSignal>();
+            Container.DeclareSignal<MenuClickedSignal>();
             
             BindPlayerModel();
             BindSaveService();
             BindConfigProvider();
             BindInput();
-            BindGameStateMachine();
+            BindSceneLoadService();
+            BindSceneLoader();
         }
         
         private void BindPlayerModel()
         {
             Container
-                .Bind<PlayerModel>()
+                .BindInterfacesAndSelfTo<PlayerModel>()
                 .AsSingle();
         }
 
@@ -63,27 +66,17 @@ namespace _Project.Core.Infrastructure
                 .AsSingle();
         }
 
-        private void BindGameStateMachine()
+        private void BindSceneLoadService()
         {
-            
             Container
-                .Bind<IGameState>()
-                .To<MenuState>()
+                .Bind<SceneLoadService>()
                 .AsSingle();
+        }
+
+        private void BindSceneLoader()
+        {
             Container
-                .Bind<IGameState>()
-                .To<LoadLevelState>()
-                .AsSingle();
-            Container
-                .Bind<IGameState>()
-                .To<GameplayState>()
-                .AsSingle();
-            Container
-                .Bind<IGameState>()
-                .To<GameOverState>()
-                .AsSingle();
-            Container
-                .Bind<GameStateMachine>()
+                .BindInterfacesAndSelfTo<SceneLoader>()
                 .AsSingle();
         }
     }

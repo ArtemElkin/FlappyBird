@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using _Project.Core.Input;
+using _Project.Core.Signals;
+using _Project.Features.Gameplay.Bird.States;
 using _Project.Features.Gameplay.Signals;
 using Zenject;
 
@@ -8,71 +10,65 @@ namespace _Project.Features.Gameplay.Bird
 {
     public class BirdMovementController : IJumpable, IInitializable, IDisposable
     {
-        public bool IsGliding => _isGliding;
-        private float _currentVelocityY;
-        private bool _isGliding;
-        private readonly float _jumpForce = 3.5f;
-        private readonly float _glideSpeed = 1.5f;
-        private readonly float _glideAmount = 1.5f;
         private readonly IInputService _inputService;
         private readonly SignalBus _signalBus;
+        private readonly BirdStateMachine  _birdStateMachine;
         
 
-        public BirdMovementController(IInputService inputService, SignalBus signalBus)
+        public BirdMovementController(
+            IInputService inputService,
+            SignalBus signalBus,
+            BirdStateMachine birdStateMachine)
         {
             _inputService = inputService;
             _signalBus = signalBus;
+            _birdStateMachine = birdStateMachine;
         }
         
         public void Initialize()
         {
+            _signalBus.Subscribe<GameOverSignal>(OnGameOver);
+            _signalBus.Subscribe<GameRestartedSignal>(OnGameRestarted);
             _inputService.JumpPressed += Jump;
-            Reset();
-        }
-
-        public void TakeOverControl()
-        {
-            _isGliding = false;
-            _signalBus.Fire<BirdActivatedSignal>();
-        }
-
-        public void Reset()
-        {
-            _isGliding = true;
-            _currentVelocityY = 0f;
-            _isGliding = true;
+            _birdStateMachine.EnterState<GlidingState>();
+            Debug.Log("BirdMovementController initialized");
         }
         
         public void Jump()
         {
-            if (_isGliding)
+            Debug.Log("BirdMovementController.Jump()");
+            if (_birdStateMachine.ActiveState is IJumpableState jumpableState)
             {
-                TakeOverControl();
+                jumpableState.Jump();
             }
-            _currentVelocityY = _jumpForce;
+            else if (_birdStateMachine.ActiveState is GlidingState)
+            {
+                _birdStateMachine.EnterState<FlyingState>();
+                _signalBus.Fire<BirdActivatedSignal>();
+                Jump();
+            }
         }
 
         public Vector3 CalculateNewLocalPosition(Vector3 currentPos, float fixedDeltaTime)
         {
-            if (_isGliding)
-            {
-                var posY = currentPos.y;
-                float newPosY = -Mathf.Sin(Time.time * _glideSpeed) * _glideAmount;
-                return new Vector3(currentPos.x, newPosY, currentPos.z);
-            }
-            else
-            {
-                var posY = currentPos.y;
-                // Y = y0 + v0t - gt^2/2
-                float newY =  posY + _currentVelocityY * fixedDeltaTime - 9.8f*(fixedDeltaTime * fixedDeltaTime) / 2;
-                _currentVelocityY = (newY - posY) / fixedDeltaTime;
-                return new Vector3(currentPos.x, newY, currentPos.z);
-            }
+            return _birdStateMachine.ActiveState.CalculateNewLocalPosition(currentPos, fixedDeltaTime);
+        }
+
+        private void OnGameOver()
+        {
+            _birdStateMachine.EnterState<DeadState>();
+        }
+
+        private void OnGameRestarted()
+        {
+            _birdStateMachine.EnterState<GlidingState>();
         }
 
         public void Dispose()
         {
             _inputService.JumpPressed -= Jump;
+            _signalBus.Unsubscribe<GameOverSignal>(OnGameOver);
+            _signalBus.Unsubscribe<GameRestartedSignal>(OnGameRestarted);
         }
     }
 }

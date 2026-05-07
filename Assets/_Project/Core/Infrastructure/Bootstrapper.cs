@@ -1,7 +1,6 @@
 using _Project.Core.Data;
 using _Project.Core.Infrastructure.Config;
 using _Project.Core.Infrastructure.Save;
-using _Project.Core.States;
 using Zenject;
 
 namespace _Project.Core.Infrastructure
@@ -11,27 +10,28 @@ namespace _Project.Core.Infrastructure
         private readonly IConfigProvider _configProvider;
         private readonly ISaveService _saveService;
         private readonly PlayerModel _playerModel;
-        private readonly GameStateMachine _gameStateMachine;
+        private readonly SceneLoader _sceneLoader;
         
         public Bootstrapper(
             IConfigProvider configProvider,
             ISaveService saveService,
             PlayerModel playerModel,
-            GameStateMachine gameStateMachine)
+            SceneLoader sceneLoader)
         {
             _configProvider = configProvider;
             _saveService = saveService;
             _playerModel = playerModel;
-            _gameStateMachine = gameStateMachine;
+            _sceneLoader = sceneLoader;
         }
 
         public void Initialize()
         {
-            var save = _saveService.Load<PlayerProgress>() ?? new PlayerProgress();
+            // var save = _saveService.Load<PlayerProgress>() ?? new PlayerProgress();
             
-            _playerModel.Setup(save);
+            // _playerModel.Setup(save);
 
-            _gameStateMachine.EnterState<MenuState>();
+            // _gameStateMachine.EnterState<MenuState>();
+            _sceneLoader.LoadMenuScene();
         }
     }
 }

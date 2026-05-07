@@ -1,4 +1,4 @@
-using _Project.Core.States;
+using _Project.Core.Signals;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -8,7 +8,7 @@ namespace _Project.Features.UI.Gameplay.Pause
     public class RestartButton : MonoBehaviour
     {
         private Button _button;
-        private GameStateMachine _gameStateMachine;
+        private SignalBus _signalBus;
 
         
         private void Awake()
@@ -21,14 +21,15 @@ namespace _Project.Features.UI.Gameplay.Pause
         }
         
         [Inject]
-        private void Construct(GameStateMachine gameStateMachine)
+        private void Construct(SignalBus signalBus)
         {
-            _gameStateMachine = gameStateMachine;
+            _signalBus = signalBus;
         }
 
         private void OnButtonClick()
         {
-            _gameStateMachine.EnterState<GameplayState>();
+            _signalBus.Fire<GameRestartedSignal>();
+            Debug.Log("Restart clicked. Signal sent");
         }
 
         private void OnDisable()

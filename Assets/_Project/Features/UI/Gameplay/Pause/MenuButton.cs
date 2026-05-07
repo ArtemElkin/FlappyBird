@@ -1,5 +1,6 @@
-using _Project.Core.States;
+using _Project.Core.Signals;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
 
@@ -8,27 +9,28 @@ namespace _Project.Features.UI.Gameplay.Pause
     public class MenuButton : MonoBehaviour
     {
         private Button _button;
-        private GameStateMachine _gameStateMachine;
+        private SignalBus _signalBus;
 
         
         private void Awake()
         {
             _button = GetComponent<Button>();
         }
+
+        [Inject]
+        private void Construct(SignalBus signalBus)
+        {
+            _signalBus = signalBus;
+        }
         private void OnEnable()
         {
             _button.onClick.AddListener(OnButtonClick);
         }
         
-        [Inject]
-        private void Construct(GameStateMachine gameStateMachine)
-        {
-            _gameStateMachine = gameStateMachine;
-        }
 
         private void OnButtonClick()
         {
-            _gameStateMachine.EnterState<MenuState>();
+            _signalBus.Fire<MenuClickedSignal>();
         }
 
         private void OnDisable()

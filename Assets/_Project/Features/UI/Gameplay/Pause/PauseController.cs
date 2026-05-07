@@ -20,7 +20,7 @@ namespace _Project.Features.UI.Gameplay.Pause
         public void Initialize()
         {
             _signalBus.Subscribe<GameOverSignal>(ShowPausePanel);
-            _signalBus.Subscribe<GameStartedSignal>(HidePausePanel);
+            _signalBus.Subscribe<GameRestartedSignal>(HidePausePanel);
         }
         
         private void ShowPausePanel()
@@ -36,7 +36,7 @@ namespace _Project.Features.UI.Gameplay.Pause
         public void Dispose()
         {
             _signalBus.Unsubscribe<GameOverSignal>(ShowPausePanel);
-            _signalBus.Unsubscribe<GameStartedSignal>(HidePausePanel);
+            _signalBus.Unsubscribe<GameRestartedSignal>(HidePausePanel);
         }
     }
 }

@@ -41,6 +41,7 @@ namespace _Project.Features.Gameplay.Chunk
         
         private void CheckFirstChunk()
         {
+            if (_firstChunk == null) return;
             var pos =  _firstChunk.transform.localPosition;
             if (pos.x < _chunkConfig.teleportationPositionX)
             {
