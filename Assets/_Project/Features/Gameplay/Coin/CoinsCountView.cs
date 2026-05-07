@@ -5,7 +5,7 @@ using Zenject;
 
 namespace _Project.Features.Gameplay.Coin
 {
-    public class CoinCountView : MonoBehaviour
+    public class CoinsCountView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _goldText;
         private PlayerModel _playerModel;
@@ -20,16 +20,16 @@ namespace _Project.Features.Gameplay.Coin
         {
             _playerModel.OnCoinsChanged += UpdateCoinsCountView;
         }
-
-        private void UpdateCoinsCountView(int value)
-        {
-            _goldText.text = value.ToString();
-        }
-
+        
         [Inject]
         private void Construct(PlayerModel playerModel)
         {
             _playerModel = playerModel;
+        }
+        
+        private void UpdateCoinsCountView(int value)
+        {
+            _goldText.text = "Coins: " + value;
         }
 
         private void OnDisable()

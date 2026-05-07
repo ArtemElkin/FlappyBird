@@ -30,7 +30,7 @@ namespace _Project.Features.Gameplay.Score
 
         private void UpdateScoreView(int value)
         {
-            _scoreText.text = value.ToString();
+            _scoreText.text = "Score: " + value;
         }
         
         private void OnDisable()
