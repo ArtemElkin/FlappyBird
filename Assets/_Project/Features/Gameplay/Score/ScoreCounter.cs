@@ -1,14 +1,21 @@
+using System;
 using _Project.Core.Data;
+using Zenject;
 
 namespace _Project.Features.Gameplay.Score
 {
-    public class ScoreCounter
+    public class ScoreCounter : IInitializable
     {
         private readonly PlayerModel _playerModel;
 
         public ScoreCounter(PlayerModel playerModel)
         {
             _playerModel = playerModel;
+        }
+
+        public void Initialize()
+        {
+            _playerModel.ResetCurrentScore();
         }
         
         public void IncreaseCurrentScore()

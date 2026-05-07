@@ -11,7 +11,7 @@ namespace _Project.Features.Gameplay.Score
         private void BindScoreCounter()
         {
             Container
-                .Bind<ScoreCounter>()
+                .BindInterfacesAndSelfTo<ScoreCounter>()
                 .AsSingle();
         }
     }

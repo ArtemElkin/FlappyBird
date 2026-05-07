@@ -18,8 +18,8 @@ namespace _Project.Features.Gameplay.Chunk
             Container.DeclareSignal<FirstChunkChangedSignal>();
             
             BindPipePairFactory(_pipePairPrefab);
-            BindChunkFactory(_chunkPrefab);
-            BindChunkSpawner(_chunksParentTransform);
+            BindChunkFactory(_chunkPrefab, _chunksParentTransform);
+            BindChunkSpawner();
             BindChunkTeleporter();
             BindChunkMovementController();
             BindPipePositionGenerator();
@@ -33,20 +33,19 @@ namespace _Project.Features.Gameplay.Chunk
                 .WithArguments(pipePairPrefab);
         }
         
-        private void BindChunkFactory(ChunkComponent chunkPrefab)
+        private void BindChunkFactory(ChunkComponent chunkPrefab, Transform chunksParentTransform)
         {
             Container
                 .Bind<ChunkFactory>()
                 .AsSingle()
-                .WithArguments(chunkPrefab);
+                .WithArguments(chunkPrefab, chunksParentTransform);
         }
 
-        private void BindChunkSpawner(Transform chunksParent)
+        private void BindChunkSpawner()
         {
             Container
                 .BindInterfacesAndSelfTo<ChunkSpawner>()
-                .AsSingle()
-                .WithArguments(chunksParent);
+                .AsSingle();
             
             Container
                 .BindInitializableExecutionOrder<ChunkSpawner>(-10);

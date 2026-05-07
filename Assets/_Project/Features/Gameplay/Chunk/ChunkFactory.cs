@@ -9,16 +9,18 @@ namespace _Project.Features.Gameplay.Chunk
         private CustomPool<ChunkComponent> _chunkPool;
         private readonly ChunkComponent _chunkPrefab;
         private readonly IInstantiator _instantiator;
+        private readonly Transform _defaultParentTransform;
         
-        public ChunkFactory(IInstantiator instantiator, ChunkComponent chunkPrefab)
+        public ChunkFactory(IInstantiator instantiator, ChunkComponent chunkPrefab, Transform parentTransform)
         {
             _instantiator = instantiator;
             _chunkPrefab = chunkPrefab;
+            _defaultParentTransform = parentTransform;
         }
 
-        public void Setup(Transform parentTransform, int preWarmChunksCount)
+        public void Setup(int preWarmChunksCount)
         {
-            _chunkPool = new CustomPool<ChunkComponent>(_instantiator, _chunkPrefab, preWarmChunksCount, parentTransform);
+            _chunkPool = new CustomPool<ChunkComponent>(_instantiator, _chunkPrefab, preWarmChunksCount, _defaultParentTransform);
         }
 
         public ChunkComponent Create(Vector3 localPosition)

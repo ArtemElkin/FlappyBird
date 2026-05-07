@@ -33,7 +33,6 @@ namespace _Project.Features.Gameplay.Chunk
             PipePairFactory pipePairFactory,
             ChunkFactory chunkFactory,
             CoinFactory coinFactory,
-            Transform parentPath,
             PipePositionGenerator pipePositionGenerator,
             SignalBus signalBus)
         {
@@ -41,7 +40,6 @@ namespace _Project.Features.Gameplay.Chunk
             _pipePairFactory = pipePairFactory;
             _chunkFactory = chunkFactory;
             _coinFactory = coinFactory;
-            _parentPath = parentPath;
             _pipePositionGenerator = pipePositionGenerator;
             _signalBus = signalBus;
         }
@@ -53,7 +51,7 @@ namespace _Project.Features.Gameplay.Chunk
             
             _config = _configProvider.GetConfig<ChunkConfig>("ChunkConfig");
             _coinFactory.Setup(_chunksCount * _config.pipePairsCount);
-            _chunkFactory.Setup(_parentPath, _chunksCount);
+            _chunkFactory.Setup(_chunksCount);
             
             _chunks =  SpawnChunks(_chunksCount, _config.pipePairsCount, _config.pipePairsInterval);
         }
