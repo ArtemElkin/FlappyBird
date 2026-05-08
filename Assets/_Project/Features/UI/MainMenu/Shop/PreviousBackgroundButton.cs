@@ -1,13 +1,12 @@
 using _Project.Features.UI.Signals;
 
-
 namespace _Project.Features.UI.MainMenu.Shop
 {
-    public class NextBackgroundButton : BaseButton
+    public class PreviousBackgroundButton : BaseButton
     {
         protected override void OnClick()
         {
-            _signalBus.Fire<NextBackgroundButtonClickedSignal>();
+            _signalBus.Fire<PreviousBackgroundButtonClickedSignal>();
         }
     }
 }
