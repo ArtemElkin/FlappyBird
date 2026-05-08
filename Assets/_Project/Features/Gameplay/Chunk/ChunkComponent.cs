@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using _Project.Core.Signals;
-using _Project.Features.Gameplay.Bird;
 using _Project.Features.Gameplay.Chunk.PipePair;
 using _Project.Features.Gameplay.Coin;
 using _Project.Features.Gameplay.Signals;
@@ -21,8 +20,13 @@ namespace _Project.Features.Gameplay.Chunk
         private ChunkConfig _config;
         private SignalBus _signalBus;
         private bool _movementIsActive;
+        private Rigidbody2D _rb;
 
 
+        private void Awake()
+        {
+            _rb = GetComponent<Rigidbody2D>();
+        }
         [Inject]
         public void Construct(
             ChunkMovementCalculator movementCalculator,
@@ -55,7 +59,7 @@ namespace _Project.Features.Gameplay.Chunk
         {
             if (!_movementIsActive) return;
             var newPos = _movementCalculator.CalculateNewPosition(transform.localPosition, _config.moveSpeed,Time.fixedDeltaTime);
-            transform.localPosition = newPos;
+            _rb.MovePosition(newPos);
         }
 
         public void Dispose()

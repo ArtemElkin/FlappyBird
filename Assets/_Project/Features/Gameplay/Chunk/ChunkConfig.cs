@@ -10,6 +10,6 @@ namespace _Project.Features.Gameplay.Chunk
         public float pipePairsInterval;
         public float pipePairOffsetY;
         public float startPositionX;
-        public float teleportationPositionX;
+        public float warpPositionX;
     }
 }

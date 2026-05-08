@@ -1,3 +1,4 @@
+using _Project.Core.Tools;
 using _Project.Features.Gameplay.Chunk.PipePair;
 using _Project.Features.Gameplay.Signals;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace _Project.Features.Gameplay.Chunk
         
         public override void InstallBindings()
         {
-            Container.DeclareSignal<ChunkInTeleportZoneSignal>();
+            Container.DeclareSignal<ChunkInWarpZoneSignal>();
             Container.DeclareSignal<FirstChunkChangedSignal>();
             
             BindPipePairFactory(_pipePairPrefab);
@@ -54,11 +55,11 @@ namespace _Project.Features.Gameplay.Chunk
         private void BindChunkTeleporter()
         {
             Container
-                .BindInterfacesAndSelfTo<ChunkTeleporter>()
+                .BindInterfacesAndSelfTo<ChunkWarper>()
                 .AsSingle();
             
             Container
-                .BindInitializableExecutionOrder<ChunkTeleporter>(0);
+                .BindInitializableExecutionOrder<ChunkWarper>(0);
         }
         
         private void BindChunkMovementController()
@@ -71,7 +72,7 @@ namespace _Project.Features.Gameplay.Chunk
         private void BindPipePositionGenerator()
         {
             Container
-                .Bind<PipePositionGenerator>()
+                .Bind<PositionGenerator>()
                 .AsSingle();
         }
     }

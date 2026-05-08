@@ -35,8 +35,11 @@ namespace _Project.Features.Gameplay.Bird
 
         private void FixedUpdate()
         {
-            Vector3 newPos = _movementController.CalculateNewLocalPosition(transform.localPosition, Time.fixedDeltaTime);
-            _rb.MovePosition(newPos);
+            var newPosition = _movementController.CalculateNewLocalPosition(transform.localPosition, Time.fixedDeltaTime);
+            _rb.MovePosition(newPosition);
+            
+            var newRotation = _movementController.CalculateNewLocalRotation(transform.localRotation, Time.fixedDeltaTime);
+            _rb.MoveRotation(newRotation);
         }
 
         private void OnTriggerEnter2D(Collider2D collision)

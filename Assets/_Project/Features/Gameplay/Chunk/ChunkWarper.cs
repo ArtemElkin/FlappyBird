@@ -7,7 +7,7 @@ using Zenject;
 
 namespace _Project.Features.Gameplay.Chunk
 {
-    public class ChunkTeleporter : IInitializable, IDisposable, ITickable
+    public class ChunkWarper : IInitializable, IDisposable, ITickable
     {
 
         private ChunkComponent _firstChunk;
@@ -16,7 +16,7 @@ namespace _Project.Features.Gameplay.Chunk
         private readonly SignalBus _signalBus;
 
 
-        public ChunkTeleporter(ChunkSpawner chunkSpawner, IConfigProvider configProvider, SignalBus signalBus)
+        public ChunkWarper(IConfigProvider configProvider, SignalBus signalBus)
         {
             _configProvider = configProvider;
             _signalBus = signalBus;
@@ -25,11 +25,16 @@ namespace _Project.Features.Gameplay.Chunk
         public void Initialize()
         {
             _chunkConfig = _configProvider.GetConfig<ChunkConfig>("ChunkConfig");
-            _signalBus.Subscribe<FirstChunkChangedSignal>(OnChunkTeleported);
+            _signalBus.Subscribe<FirstChunkChangedSignal>(OnChunkWarped);
             // _signalBus.Subscribe<>
         }
 
-        private void OnChunkTeleported(FirstChunkChangedSignal signal)
+        public void Setup(ChunkComponent firstChunk)
+        {
+            _firstChunk = firstChunk;
+        }
+
+        private void OnChunkWarped(FirstChunkChangedSignal signal)
         {
             _firstChunk = signal.newFirstChunk;
         }
@@ -43,15 +48,15 @@ namespace _Project.Features.Gameplay.Chunk
         {
             if (_firstChunk == null) return;
             var pos =  _firstChunk.transform.localPosition;
-            if (pos.x < _chunkConfig.teleportationPositionX)
+            if (pos.x < _chunkConfig.warpPositionX)
             {
-                _signalBus.Fire<ChunkInTeleportZoneSignal>(new ChunkInTeleportZoneSignal(_firstChunk));
+                _signalBus.Fire<ChunkInWarpZoneSignal>(new ChunkInWarpZoneSignal(_firstChunk));
             }
         }
 
         public void Dispose()
         {
-            _signalBus.Unsubscribe<FirstChunkChangedSignal>(OnChunkTeleported);
+            _signalBus.Unsubscribe<FirstChunkChangedSignal>(OnChunkWarped);
         }
     }
 }

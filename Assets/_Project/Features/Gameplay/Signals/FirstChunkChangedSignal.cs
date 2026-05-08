@@ -10,7 +10,6 @@ namespace _Project.Features.Gameplay.Signals
         public FirstChunkChangedSignal(ChunkComponent newFirstChunk)
         {
             this.newFirstChunk = newFirstChunk;
-            Debug.Log("First Chunk Changed");
         }
     }
 }

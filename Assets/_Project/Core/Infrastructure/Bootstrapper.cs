@@ -30,7 +30,6 @@ namespace _Project.Core.Infrastructure
             
             // _playerModel.Setup(save);
 
-            // _gameStateMachine.EnterState<MenuState>();
             _sceneLoader.LoadMenuScene();
         }
     }

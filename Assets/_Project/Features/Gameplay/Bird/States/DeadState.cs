@@ -13,6 +13,11 @@ namespace _Project.Features.Gameplay.Bird.States
         {
             return currentPos;
         }
+        
+        public Quaternion CalculateNewLocalRotation(Quaternion currentRotation, float fixedDeltaTime)
+        {
+            return currentRotation;
+        }
 
         public void Exit()
         {

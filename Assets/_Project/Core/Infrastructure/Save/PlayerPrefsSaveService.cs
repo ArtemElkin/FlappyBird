@@ -6,19 +6,19 @@ namespace _Project.Core.Infrastructure.Save
 {
     public class PlayerPrefsSaveService : ISaveService
     {
-        private readonly string _path = "save.json";
+        private const string Path = "save.json";
         
         public void Save(ISave save)
         {
             string json =  JsonConvert.SerializeObject(save);
-            PlayerPrefs.SetString(_path, json);
+            PlayerPrefs.SetString(Path, json);
         }
 
         public T Load<T>() where T : ISave
         {
-            if (PlayerPrefs.HasKey(_path))
+            if (PlayerPrefs.HasKey(Path))
             {
-                string json = PlayerPrefs.GetString(_path);
+                string json = PlayerPrefs.GetString(Path);
                 T save = JsonConvert.DeserializeObject<T>(json);
                 return save;
             }

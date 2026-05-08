@@ -31,12 +31,10 @@ namespace _Project.Features.Gameplay.Bird
             _signalBus.Subscribe<GameRestartedSignal>(OnGameRestarted);
             _inputService.JumpPressed += Jump;
             _birdStateMachine.EnterState<GlidingState>();
-            Debug.Log("BirdMovementController initialized");
         }
         
         public void Jump()
         {
-            Debug.Log("BirdMovementController.Jump()");
             if (_birdStateMachine.ActiveState is IJumpableState jumpableState)
             {
                 jumpableState.Jump();
@@ -53,6 +51,13 @@ namespace _Project.Features.Gameplay.Bird
         {
             return _birdStateMachine.ActiveState.CalculateNewLocalPosition(currentPos, fixedDeltaTime);
         }
+
+        public Quaternion CalculateNewLocalRotation(Quaternion currentRotation, float fixedDeltaTime)
+        {
+            return _birdStateMachine.ActiveState.CalculateNewLocalRotation(currentRotation, fixedDeltaTime);
+        }
+        
+        
 
         private void OnGameOver()
         {
