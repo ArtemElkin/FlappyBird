@@ -1,14 +1,16 @@
 using _Project.Features.Gameplay.Background;
 
+
 namespace _Project.Features.Gameplay.Signals
 {
     public class BackgroundInWarpZoneSignal
     {
-        public BackgroundComponent backgroundToWarp;
+        public BackgroundLayerComponent BackgroundLayerToWarp;
 
-        public BackgroundInWarpZoneSignal(BackgroundComponent backgroundToWarp)
+        
+        public BackgroundInWarpZoneSignal(BackgroundLayerComponent backgroundLayerToWarp)
         {
-            this.backgroundToWarp = backgroundToWarp;
+            this.BackgroundLayerToWarp = backgroundLayerToWarp;
         }
     }
 }

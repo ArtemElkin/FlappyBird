@@ -6,6 +6,7 @@ using _Project.Features.Gameplay.Bird.States;
 using _Project.Features.Gameplay.Signals;
 using Zenject;
 
+
 namespace _Project.Features.Gameplay.Bird
 {
     public class BirdMovementController : IJumpable, IInitializable, IDisposable
@@ -56,8 +57,6 @@ namespace _Project.Features.Gameplay.Bird
         {
             return _birdStateMachine.ActiveState.CalculateNewLocalRotation(currentRotation, fixedDeltaTime);
         }
-        
-        
 
         private void OnGameOver()
         {

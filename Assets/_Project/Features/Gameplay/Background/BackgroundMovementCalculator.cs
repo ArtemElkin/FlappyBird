@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 namespace _Project.Features.Gameplay.Background
 {
     public class BackgroundMovementCalculator

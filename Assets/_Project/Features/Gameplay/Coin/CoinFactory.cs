@@ -2,6 +2,7 @@ using _Project.Core.Tools;
 using UnityEngine;
 using Zenject;
 
+
 namespace _Project.Features.Gameplay.Coin
 {
     public class CoinFactory
@@ -11,6 +12,7 @@ namespace _Project.Features.Gameplay.Coin
         private readonly IInstantiator _instantiator;
         private readonly Transform _defaultParentTransform;
 
+        
         public CoinFactory(IInstantiator instantiator, CoinComponent coinPrefab, Transform defaultParentTransform)
         {
             _instantiator = instantiator;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using _Project.Core.Infrastructure.Save;
 using _Project.Core.Signals;
 using UnityEngine;
@@ -12,23 +13,11 @@ namespace _Project.Core.Data
         public event Action<int> OnCurrentScoreChanged;
         public event Action<int> OnCoinsChanged;
         private int _currentScore;
-        private PlayerProgress _playerProgress;
+        private PlayerSave _playerSave;
         private readonly SignalBus _signalBus;
-        private ISaveService _saveService;
-        
-        public int MaxScore => _playerProgress.maxScore;
-        public int Coins
-        {
-            get => _playerProgress.coins;
-            set
-            {
-                if (value != _playerProgress.coins)
-                {
-                    _playerProgress.coins = value;
-                    OnCoinsChanged?.Invoke(value);
-                }
-            }
-        }
+        private readonly ISaveService _saveService;
+        public int MaxScore => _playerSave.maxScore;
+        public int Coins =>  _playerSave.coins;
         public int CurrentScore
         {
             get => _currentScore;
@@ -41,7 +30,8 @@ namespace _Project.Core.Data
                 }
             }
         }
-        public PlayerProgress PlayerProgress => _playerProgress;
+        public int CurrentBackgroundId => _playerSave.currentBackgroundId;
+        public List<int> UnlockedBackgroundIds => _playerSave.unlockedBackgroundIds;
 
 
         public PlayerModel(ISaveService saveService, SignalBus signalBus)
@@ -49,13 +39,14 @@ namespace _Project.Core.Data
             _saveService = saveService;
             _signalBus = signalBus;
         }
-        
-        public void TryUpdateMaxScore(int newMaxScore)
+
+        public void Initialize()
         {
-            if (newMaxScore > MaxScore)
-            {
-                _playerProgress.maxScore = newMaxScore;
-            }
+            _signalBus.Subscribe<GameOverSignal>(OnGameOver);
+            _signalBus.Subscribe<GameRestartedSignal>(ResetCurrentScore);
+            
+            Load();
+            ResetCurrentScore();
         }
 
         public void IncreaseCurrentScore()
@@ -68,39 +59,60 @@ namespace _Project.Core.Data
             CurrentScore = 0;
         }
 
-        public void AddGold(int amount)
+        public void TryUpdateMaxScore(int newMaxScore)
         {
-            Coins += amount;
+            if (newMaxScore > MaxScore)
+            {
+                _playerSave.maxScore = newMaxScore;
+            }
         }
 
-        public bool TryRemoveGold(int amount)
+        public void AddCoins(int amount)
+        {
+            _playerSave.coins += amount;
+            OnCoinsChanged?.Invoke(_playerSave.coins);
+        }
+
+        public bool TryRemoveCoins(int amount)
         {
             if (Coins >= amount)
             {
-                Coins -= amount;
+                _playerSave.coins -= amount;
+                OnCoinsChanged?.Invoke(_playerSave.coins);
                 return true;
             }
             return false;
         }
 
-        public void Initialize()
+        public void SetCurrentBackgroundId(int id)
         {
-            _playerProgress = _saveService.Load<PlayerProgress>() ?? new PlayerProgress();
-            _signalBus.Subscribe<GameOverSignal>(OnGameOver);
-            _signalBus.Subscribe<GameRestartedSignal>(ResetCurrentScore);
-            ResetCurrentScore();
+            _playerSave.currentBackgroundId = id;
+        }
+
+        public void UnlockBackground(int backgroundId)
+        {
+            _playerSave.unlockedBackgroundIds.Add(backgroundId);
+        }
+
+        public void Save()
+        {
+            _saveService.Save(_playerSave);
+        }
+        private void Load()
+        {
+            _playerSave = _saveService.Load<PlayerSave>() ?? new PlayerSave();
+        }
+
+        private void OnGameOver()
+        {
+            TryUpdateMaxScore(CurrentScore);
+            Save();
         }
 
         public void Dispose()
         {
             _signalBus.Unsubscribe<GameOverSignal>(OnGameOver);
             _signalBus.Unsubscribe<GameRestartedSignal>(ResetCurrentScore);
-        }
-
-        private void OnGameOver()
-        {
-            TryUpdateMaxScore(CurrentScore);
-            _saveService.Save(PlayerProgress);
         }
     }
 }

@@ -1,5 +1,6 @@
 using Zenject;
 
+
 namespace _Project.Features.Gameplay.Score
 {
     public class ScoreInstaller : MonoInstaller
@@ -8,6 +9,7 @@ namespace _Project.Features.Gameplay.Score
         {
             BindScoreCounter();
         }
+        
         private void BindScoreCounter()
         {
             Container

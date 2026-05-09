@@ -3,6 +3,7 @@ using _Project.Core.Data;
 using _Project.Features.Gameplay.Signals;
 using Zenject;
 
+
 namespace _Project.Features.Gameplay.Coin
 {
     public class CoinCollector : IInitializable, IDisposable
@@ -11,6 +12,7 @@ namespace _Project.Features.Gameplay.Coin
         private readonly CoinFactory _coinFactory;
         private readonly SignalBus _signalBus;
 
+        
         public CoinCollector(PlayerModel playerModel, CoinFactory coinFactory, SignalBus signalBus)
         {
             _playerModel = playerModel;
@@ -25,7 +27,7 @@ namespace _Project.Features.Gameplay.Coin
         
         private void OnGoldCollected(CoinCollectedSignal signal)
         {
-            _playerModel.AddGold(1);
+            _playerModel.AddCoins(1);
             _coinFactory.Release(signal.coinComponent);
         }
 

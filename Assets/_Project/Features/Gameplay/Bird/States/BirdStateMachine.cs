@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 
+
 namespace _Project.Features.Gameplay.Bird.States
 {
     public class BirdStateMachine
     {
-        public IState ActiveState { get; private set; }
         private readonly Dictionary<Type, IState> _states = new();
+        public IState ActiveState { get; private set; }
         
         
         public BirdStateMachine(List<IState> states)

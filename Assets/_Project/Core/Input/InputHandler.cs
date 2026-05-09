@@ -7,6 +7,8 @@ namespace _Project.Core.Input
     public class InputHandler : MonoBehaviour, IInputService
     {
         public event Action JumpPressed;
+        
+        
         private void Update()
         {
             CheckJump();

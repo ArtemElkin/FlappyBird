@@ -13,6 +13,7 @@ namespace _Project.Core.Tools
         private Transform _defaultParentTransform;
         private IInstantiator _instantiator;
 
+        
         public CustomPool(IInstantiator instantiator, T prefab, int prewarmObjects, Transform defaultParentTransform)
         {
             _instantiator = instantiator;
@@ -27,7 +28,6 @@ namespace _Project.Core.Tools
                 _objects.Add(obj);
             }
         }
-        
 
         public T Get(Transform parentTransform = null)
         {

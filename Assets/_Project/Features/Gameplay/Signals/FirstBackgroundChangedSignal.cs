@@ -5,15 +5,15 @@ namespace _Project.Features.Gameplay.Signals
 {
     public class FirstBackgroundChangedSignal
     {
-        public BackgroundComponent newFirstBackground;
-        public BackgroundComponent previousFirstBackground;
+        public BackgroundLayerComponent NewFirstBackgroundLayer;
+        public BackgroundLayerComponent PreviousFirstBackgroundLayer;
 
         public FirstBackgroundChangedSignal(
-            BackgroundComponent newFirstBackground,
-            BackgroundComponent previousFirstBackground)
+            BackgroundLayerComponent newFirstBackgroundLayer,
+            BackgroundLayerComponent previousFirstBackgroundLayer)
         {
-            this.newFirstBackground = newFirstBackground;
-            this.previousFirstBackground = previousFirstBackground;
+            this.NewFirstBackgroundLayer = newFirstBackgroundLayer;
+            this.PreviousFirstBackgroundLayer = previousFirstBackgroundLayer;
         }
     }
 }

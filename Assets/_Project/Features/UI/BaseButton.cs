@@ -1,7 +1,7 @@
-using _Project.Features.UI.Signals;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+
 
 namespace _Project.Features.UI
 {
@@ -9,12 +9,7 @@ namespace _Project.Features.UI
     {
         private Button _button;
         protected SignalBus _signalBus;
-
-
-        private void Awake()
-        {
-            _button = GetComponent<Button>();
-        }
+        
 
         private void OnEnable()
         {
@@ -25,6 +20,7 @@ namespace _Project.Features.UI
         private void Construct(SignalBus signalBus)
         {
             _signalBus = signalBus;
+            _button = GetComponent<Button>();
         }
 
         protected abstract void OnClick();

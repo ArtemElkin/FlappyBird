@@ -3,18 +3,14 @@ using TMPro;
 using UnityEngine;
 using Zenject;
 
+
 namespace _Project.Features.Gameplay.Coin
 {
     public class CoinsCountView : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _goldText;
+        private TextMeshProUGUI _coinsText;
         private PlayerModel _playerModel;
-
-        private void Awake()
-        {
-            _goldText = GetComponent<TextMeshProUGUI>();
-            UpdateCoinsCountView(_playerModel.Coins);
-        }
+        
 
         private void OnEnable()
         {
@@ -25,11 +21,13 @@ namespace _Project.Features.Gameplay.Coin
         private void Construct(PlayerModel playerModel)
         {
             _playerModel = playerModel;
+            _coinsText = GetComponent<TextMeshProUGUI>();
+            UpdateCoinsCountView(_playerModel.Coins);
         }
         
         private void UpdateCoinsCountView(int value)
         {
-            _goldText.text = "Coins: " + value;
+            _coinsText.text = value + " $";
         }
 
         private void OnDisable()

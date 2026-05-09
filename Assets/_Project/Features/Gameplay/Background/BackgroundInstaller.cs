@@ -3,14 +3,16 @@ using _Project.Features.Gameplay.Signals;
 using UnityEngine;
 using Zenject;
 
+
 namespace _Project.Features.Gameplay.Background
 {
     public class BackgroundInstaller : MonoInstaller
     {
-        [SerializeField] private BackgroundComponent _backgroundPrefab;
-        [SerializeField] private List<Background> _backgrounds;
+        [SerializeField] private BackgroundLayerComponent _backgroundLayerPrefab;
+        [SerializeField] private List<BackgroundLayer> _backgrounds;
         [SerializeField] private Transform _backgroundParentTransform;
 
+        
         public override void InstallBindings()
         {
             Container.DeclareSignal<BackgroundInWarpZoneSignal>();
@@ -20,9 +22,7 @@ namespace _Project.Features.Gameplay.Background
             BindBackgroundSpawner();
             BindBackgroundWarper();
         }
-
         
-
         private void BindBackgroundmMovementCalculator()
         {
             Container
@@ -34,7 +34,7 @@ namespace _Project.Features.Gameplay.Background
             Container
                 .BindInterfacesAndSelfTo<BackgroundSpawner>()
                 .AsSingle()
-                .WithArguments(_backgrounds, _backgroundPrefab, _backgroundParentTransform);
+                .WithArguments(_backgroundLayerPrefab, _backgroundParentTransform);
         }
 
         private void BindBackgroundWarper()

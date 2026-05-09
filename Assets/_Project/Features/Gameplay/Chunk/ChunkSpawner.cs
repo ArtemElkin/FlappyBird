@@ -50,7 +50,7 @@ namespace _Project.Features.Gameplay.Chunk
             _signalBus.Subscribe<ChunkInWarpZoneSignal>(OnChunkInWarpZone);
             _signalBus.Subscribe<GameRestartedSignal>(OnGameRestarted);
             
-            _config = _configProvider.GetConfig<ChunkConfig>("ChunkConfig");
+            _config = _configProvider.GetConfigFromJson<ChunkConfig>("ChunkConfig");
             _coinFactory.Setup(_chunksCount * _config.pipePairsCount);
             _chunkFactory.Setup(_chunksCount);
             
@@ -104,11 +104,11 @@ namespace _Project.Features.Gameplay.Chunk
         
         private void RespawnChunk(ChunkComponent chunk)
         {
-            foreach (var coin in chunk.Golds)
+            foreach (var coin in chunk.Coins)
             {
                 _coinFactory.Release(coin);
             }
-            chunk.Golds.Clear();
+            chunk.Coins.Clear();
             foreach (var pipePair in chunk.PipePairs)
             {
                 var prevPos = pipePair.transform.localPosition;
@@ -118,7 +118,7 @@ namespace _Project.Features.Gameplay.Chunk
                 var posX = prevPos.x + _config.pipePairsInterval / 2f;
                 posY = _positionGenerator.GenerateRandomPositionY(_config.pipePairOffsetY);
                 var gold  = _coinFactory.Create(new Vector3(posX, posY, prevPos.z), chunk.transform);
-                chunk.Golds.Add(gold);
+                chunk.Coins.Add(gold);
             }
         }
 

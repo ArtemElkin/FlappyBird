@@ -1,5 +1,6 @@
 using System;
 
+
 namespace _Project.Core.Tools
 {
     public class PositionGenerator
@@ -7,6 +8,7 @@ namespace _Project.Core.Tools
         private const int Scale = 100;
         private readonly Random _random;
 
+        
         public PositionGenerator(int? seed = null)
         {
             _random = seed.HasValue ? new Random(seed.Value) : new Random();

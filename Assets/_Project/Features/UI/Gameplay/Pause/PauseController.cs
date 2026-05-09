@@ -1,8 +1,8 @@
 using System;
 using _Project.Core.Signals;
-using _Project.Features.Gameplay.Signals;
 using UnityEngine;
 using Zenject;
+
 
 namespace _Project.Features.UI.Gameplay.Pause
 {
@@ -10,6 +10,7 @@ namespace _Project.Features.UI.Gameplay.Pause
     {
         private readonly GameObject _pausePanel;
         private readonly SignalBus _signalBus;
+        
         
         public PauseController(GameObject pausePanel, SignalBus signalBus)
         {

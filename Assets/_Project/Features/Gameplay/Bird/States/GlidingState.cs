@@ -6,13 +6,14 @@ namespace _Project.Features.Gameplay.Bird.States
     {
         private const float GlideSpeed = 1.5f;
         private const float GlideAmount = 1.5f;
-        private float _currentVelocityY;
         private const float MinRotationZ = -50f;
         private const float MaxRotationZ = 50f;
         private const float MinVelocityY = -5f;
         private const float MaxVelocityY = 5f;
+        private float _currentVelocityY;
         private Quaternion _minRotation;
         private Quaternion _maxRotation;
+
         public void Enter()
         {
             _currentVelocityY = 0f;

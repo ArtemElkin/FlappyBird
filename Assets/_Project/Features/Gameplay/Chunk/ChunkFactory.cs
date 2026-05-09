@@ -2,6 +2,7 @@ using _Project.Core.Tools;
 using UnityEngine;
 using Zenject;
 
+
 namespace _Project.Features.Gameplay.Chunk
 {
     public class ChunkFactory
@@ -10,6 +11,7 @@ namespace _Project.Features.Gameplay.Chunk
         private readonly ChunkComponent _chunkPrefab;
         private readonly IInstantiator _instantiator;
         private readonly Transform _defaultParentTransform;
+        
         
         public ChunkFactory(IInstantiator instantiator, ChunkComponent chunkPrefab, Transform parentTransform)
         {
@@ -29,6 +31,5 @@ namespace _Project.Features.Gameplay.Chunk
             chunk.transform.localPosition = localPosition;
             return chunk;
         }
-        
     }
 }

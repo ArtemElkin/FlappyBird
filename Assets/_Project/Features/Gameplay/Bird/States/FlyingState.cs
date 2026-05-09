@@ -1,15 +1,16 @@
 using UnityEngine;
 
+
 namespace _Project.Features.Gameplay.Bird.States
 {
     public class FlyingState : IJumpableState
     {
-        private float _currentVelocityY;
         private const float JumpForce = 3.5f;
         private const float MinRotationZ = -50f;
         private const float MaxRotationZ = 50f;
         private const float MinVelocityY = -5f;
         private const float MaxVelocityY = 5f;
+        private float _currentVelocityY;
         private Quaternion _minRotation;
         private Quaternion _maxRotation;
         

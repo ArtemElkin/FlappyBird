@@ -3,6 +3,7 @@ using _Project.Core.Signals;
 using _Project.Core.Tools;
 using Zenject;
 
+
 namespace _Project.Core.Infrastructure
 {
     public class SceneLoader : IInitializable, IDisposable
@@ -12,7 +13,6 @@ namespace _Project.Core.Infrastructure
         
         private readonly SceneLoadService _sceneLoadService;
         private readonly SignalBus _signalBus;
-        
         
         
         public SceneLoader(SceneLoadService sceneLoadService, SignalBus signalBus)

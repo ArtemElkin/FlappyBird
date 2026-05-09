@@ -7,33 +7,33 @@ using _Project.Core.Tools;
 using UnityEngine;
 using Zenject;
 
+
 namespace _Project.Core.Infrastructure
 {
     public class ProjectInstaller : MonoInstaller
     {
         [SerializeField] private GameObject _inputHandlerPrefab;
+        
+        
         public override void InstallBindings()
         {
-            // Биндинг лоад сервисов, sdk, сигнальной шины
             BindSignalBus();
             Container.DeclareSignal<GameOverSignal>();
             Container.DeclareSignal<GameRestartedSignal>();
             Container.DeclareSignal<StartGameClickedSignal>();
             Container.DeclareSignal<MenuClickedSignal>();
             
-            BindPlayerModel();
             BindSaveService();
-            BindConfigProvider();
+            BindConfigProviders();
+            BindPlayerModel();
             BindInput();
             BindSceneLoadService();
             BindSceneLoader();
         }
-        
-        private void BindPlayerModel()
+
+        private void BindSignalBus()
         {
-            Container
-                .BindInterfacesAndSelfTo<PlayerModel>()
-                .AsSingle();
+            SignalBusInstaller.Install(Container);
         }
 
         private void BindSaveService()
@@ -43,20 +43,21 @@ namespace _Project.Core.Infrastructure
                 .To<PlayerPrefsSaveService>()
                 .AsSingle();
         }
-        
-        private void BindConfigProvider()
+
+        private void BindConfigProviders()
         {
             Container
-                .Bind<IConfigProvider>()
-                .To<ResourcesConfigProvider>()
+                .BindInterfacesAndSelfTo<ResourcesConfigProvider>()
                 .AsSingle();
         }
-        
-        private void BindSignalBus()
+
+        private void BindPlayerModel()
         {
-            SignalBusInstaller.Install(Container);
+            Container
+                .BindInterfacesAndSelfTo<PlayerModel>()
+                .AsSingle();
         }
-        
+
         private void BindInput()
         {
             Container

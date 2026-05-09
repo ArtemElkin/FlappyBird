@@ -1,8 +1,8 @@
 using _Project.Core.Signals;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
+
 
 namespace _Project.Features.UI.MainMenu
 {
@@ -10,11 +10,8 @@ namespace _Project.Features.UI.MainMenu
     {
         private Button _button;
         private SignalBus _signalBus;
-
-        private void Awake()
-        {
-            _button = GetComponent<Button>();
-        }
+        
+        
         private void OnEnable()
         {
             _button.onClick.AddListener(OnButtonClick);
@@ -24,6 +21,7 @@ namespace _Project.Features.UI.MainMenu
         private void Construct(SignalBus signalBus)
         {
             _signalBus = signalBus;
+            _button = GetComponent<Button>();
         }
 
         private void OnButtonClick()

@@ -1,8 +1,8 @@
 using _Project.Core.Data;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
+
 
 namespace _Project.Features.Gameplay.Score
 {
@@ -11,12 +11,7 @@ namespace _Project.Features.Gameplay.Score
         [SerializeField] private TextMeshProUGUI _scoreText;
         private PlayerModel _playerModel;
 
-        private void Awake()
-        {
-            _scoreText = GetComponent<TextMeshProUGUI>();
-            UpdateScoreView(_playerModel.CurrentScore);
-        }
-
+        
         private void OnEnable()
         {
             _playerModel.OnCurrentScoreChanged += UpdateScoreView;
@@ -26,6 +21,8 @@ namespace _Project.Features.Gameplay.Score
         private void Construct(PlayerModel playerModel)
         {
             _playerModel = playerModel;
+            _scoreText = GetComponent<TextMeshProUGUI>();
+            UpdateScoreView(_playerModel.CurrentScore);
         }
 
         private void UpdateScoreView(int value)

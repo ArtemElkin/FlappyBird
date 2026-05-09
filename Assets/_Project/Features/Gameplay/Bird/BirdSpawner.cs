@@ -13,6 +13,7 @@ namespace _Project.Features.Gameplay.Bird
         private readonly SignalBus _signalBus;
         private readonly IInstantiator _instantiator;
         
+        
         public BirdSpawner(
             BirdComponent birdPrefab,
             SignalBus signalBus,
@@ -28,7 +29,7 @@ namespace _Project.Features.Gameplay.Bird
             RespawnBird();
         }
 
-        public void RespawnBird()
+        private void RespawnBird()
         {
             if (_bird == null)
             {

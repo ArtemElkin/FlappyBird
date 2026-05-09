@@ -5,12 +5,13 @@ using _Project.Features.Gameplay.Chunk;
 using _Project.Features.Gameplay.Signals;
 using Zenject;
 
+
 namespace _Project.Features.Gameplay.Background
 {
     public class BackgroundWarper : IInitializable, IDisposable, ITickable
     {
         private float _warpPositionX;
-        private List<BackgroundComponent> _firstBackgrounds;
+        private List<BackgroundLayerComponent> _firstBackgrounds;
         private readonly SignalBus _signalBus;
         private readonly IConfigProvider _configProvider;
         
@@ -22,14 +23,15 @@ namespace _Project.Features.Gameplay.Background
             _signalBus = signalBus;
             _configProvider = configProvider;
         }
+        
         public void Initialize()
         {
             _signalBus.Subscribe<FirstBackgroundChangedSignal>(OnFirstBackgroundChanged);
-            var config = _configProvider.GetConfig<ChunkConfig>("ChunkConfig");
+            var config = _configProvider.GetConfigFromJson<ChunkConfig>("ChunkConfig");
             _warpPositionX = config.warpPositionX;
         }
 
-        public void Setup(List<BackgroundComponent> firstBackgrounds)
+        public void Setup(List<BackgroundLayerComponent> firstBackgrounds)
         {
             _firstBackgrounds = firstBackgrounds;
         }
@@ -53,8 +55,8 @@ namespace _Project.Features.Gameplay.Background
 
         private void OnFirstBackgroundChanged(FirstBackgroundChangedSignal signal)
         {
-            _firstBackgrounds.Remove(signal.previousFirstBackground);
-            _firstBackgrounds.Add(signal.newFirstBackground);
+            _firstBackgrounds.Remove(signal.PreviousFirstBackgroundLayer);
+            _firstBackgrounds.Add(signal.NewFirstBackgroundLayer);
         }
 
         public void Dispose()
