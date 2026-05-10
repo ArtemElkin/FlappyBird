@@ -30,6 +30,7 @@ namespace _Project.Features.Gameplay.Background
         [Inject]
         private void Construct(BackgroundMovementCalculator movementCalculator, SignalBus signalBus)
         {
+            _signalBus = signalBus;
             _movementCalculator = movementCalculator;
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
@@ -39,6 +40,7 @@ namespace _Project.Features.Gameplay.Background
             backgroundLayer = backgroundLayerConfig;
             _spriteRenderer.sprite = backgroundLayer.sprite;
             _spriteRenderer.sortingOrder = backgroundLayer.order;
+            _movementIsActive = true;
         }
 
         private void ActivateMovement() => _movementIsActive = true;
