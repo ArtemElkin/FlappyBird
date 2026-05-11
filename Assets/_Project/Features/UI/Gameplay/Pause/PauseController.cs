@@ -1,4 +1,5 @@
 using System;
+using _Project.Core.Ads;
 using _Project.Core.Signals;
 using UnityEngine;
 using Zenject;
@@ -10,12 +11,14 @@ namespace _Project.Features.UI.Gameplay.Pause
     {
         private readonly GameObject _pausePanel;
         private readonly SignalBus _signalBus;
+        private readonly IAdsService _adsService;
         
         
-        public PauseController(GameObject pausePanel, SignalBus signalBus)
+        public PauseController(GameObject pausePanel, SignalBus signalBus, IAdsService  adsService)
         {
             _pausePanel = pausePanel;
             _signalBus = signalBus;
+            _adsService = adsService;
         }
 
         public void Initialize()
@@ -27,11 +30,13 @@ namespace _Project.Features.UI.Gameplay.Pause
         private void ShowPausePanel()
         {
             _pausePanel.SetActive(true);
+            _adsService.ShowBanner();
         }
 
         private void HidePausePanel()
         {
             _pausePanel.SetActive(false);
+            _adsService.HideBanner();
         }
 
         public void Dispose()

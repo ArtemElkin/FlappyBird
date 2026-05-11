@@ -1,3 +1,4 @@
+using _Project.Core.Ads;
 using _Project.Core.Data;
 using _Project.Core.Infrastructure.Config;
 using _Project.Core.Infrastructure.Save;
@@ -29,6 +30,7 @@ namespace _Project.Core.Infrastructure
             BindInput();
             BindSceneLoadService();
             BindSceneLoader();
+            BindAdsService();
         }
 
         private void BindSignalBus()
@@ -78,6 +80,13 @@ namespace _Project.Core.Infrastructure
         {
             Container
                 .BindInterfacesAndSelfTo<SceneLoader>()
+                .AsSingle();
+        }
+
+        private void BindAdsService()
+        {
+            Container
+                .BindInterfacesAndSelfTo<YandexAdsService>()
                 .AsSingle();
         }
     }
