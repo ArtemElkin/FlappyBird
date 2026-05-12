@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using _Project.Core.Ads;
 using _Project.Core.Data;
 using _Project.Core.Infrastructure.Config;
 using _Project.Core.Infrastructure.Save;
@@ -22,19 +23,22 @@ namespace _Project.Features.UI.MainMenu.Shop
         private readonly SignalBus _signalBus;
         private readonly ResourcesConfigProvider _configProvider;
         private readonly ISaveService _saveService;
+        private readonly IAdsService _adsService;
 
         public Shop(
             BackgroundCardView backgroundCardView,
             BuyChooseBackgroundButton  buyChooseBackgroundButton,
             PlayerModel playerModel,
             SignalBus signalBus,
-            ResourcesConfigProvider configProvider)
+            ResourcesConfigProvider configProvider,
+            IAdsService adsService)
         {
             _backgroundCardView = backgroundCardView;
             _buyChooseBackgroundButton = buyChooseBackgroundButton;
             _playerModel = playerModel;
             _signalBus = signalBus;
             _configProvider = configProvider;
+            _adsService = adsService;
         }
         
         public void Initialize()
@@ -61,8 +65,11 @@ namespace _Project.Features.UI.MainMenu.Shop
         private void UpdateCard()
         {
             bool unlocked = _playerModel.UnlockedBackgroundIds.Contains(_currentShownBackgroundId);
+            bool isBonus = _backgroundConfigs[_currentShownBackgroundId] is  BonusBackgroundConfig;
             _backgroundCardView.UpdateCard(_backgroundConfigs[_currentShownBackgroundId], unlocked);
-            var textOnBtn = unlocked ? "Choose" : "Buy";
+            
+            var textOnBtn = unlocked ? "Choose" : (isBonus ? "Watch Ad" : "Buy");
+            
             _buyChooseBackgroundButton.UpdateText(textOnBtn);
             _buyChooseBackgroundButton.gameObject.SetActive(_currentShownBackgroundId != _playerModel.CurrentBackgroundId);
         }
@@ -92,6 +99,14 @@ namespace _Project.Features.UI.MainMenu.Shop
             if (_playerModel.UnlockedBackgroundIds.Contains(_currentShownBackgroundId))
             {
                 ChooseCurrentBackground();
+            }
+            else if (_backgroundConfigs[_currentShownBackgroundId] is BonusBackgroundConfig)
+            {
+                _adsService.ShowRewarded(() =>
+                {
+                    _playerModel.UnlockBackground(_currentShownBackgroundId);
+                    _playerModel.Save();
+                });
             }
             else
             {
