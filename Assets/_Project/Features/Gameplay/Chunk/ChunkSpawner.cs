@@ -25,6 +25,7 @@ namespace _Project.Features.Gameplay.Chunk
         private readonly CoinFactory _coinFactory;
         private readonly SignalBus _signalBus;
         private readonly ChunkWarper _chunkWarper;
+        private readonly ScreenBoundsCalculator _screenBoundsCalculator;
 
 
         public ChunkSpawner(
@@ -34,7 +35,8 @@ namespace _Project.Features.Gameplay.Chunk
             CoinFactory coinFactory,
             PositionGenerator positionGenerator,
             ChunkWarper chunkWarper,
-            SignalBus signalBus)
+            SignalBus signalBus,
+            ScreenBoundsCalculator screenBoundsCalculator)
         {
             _configProvider = configProvider;
             _pipePairFactory = pipePairFactory;
@@ -43,6 +45,7 @@ namespace _Project.Features.Gameplay.Chunk
             _positionGenerator = positionGenerator;
             _signalBus = signalBus;
             _chunkWarper = chunkWarper;
+            _screenBoundsCalculator = screenBoundsCalculator;
         }
         
         public void Initialize()
@@ -65,7 +68,7 @@ namespace _Project.Features.Gameplay.Chunk
             
             for (int i = 0; i < chunkCount; i++)
             {
-                var chunkLocalPosX = i * chunkWidth + _config.startPositionX;
+                var chunkLocalPosX = i * chunkWidth + _screenBoundsCalculator.RightEdgeX + chunkWidth / 2;
                 var chunk = _chunkFactory.Create(new Vector3(chunkLocalPosX, 0f, 0f));
                 var pipePairs = new List<PipePairComponent>();
                 var golds = new List<CoinComponent>();
@@ -133,7 +136,7 @@ namespace _Project.Features.Gameplay.Chunk
             Chunks.Clear();
             for (int i = 0; i < _chunksCount; i++)
             {
-                var chunkLocalPosX = i * chunkWidth + _config.startPositionX;
+                var chunkLocalPosX = i * chunkWidth + _screenBoundsCalculator.RightEdgeX + chunkWidth / 2;
                 chunks[i].transform.localPosition = new Vector3(chunkLocalPosX, 0f, 0f);
                 RespawnChunk(chunks[i]);
                 Chunks.AddLast(chunks[i]);

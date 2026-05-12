@@ -9,7 +9,5 @@ namespace _Project.Features.Gameplay.Chunk
         public int pipePairsCount;
         public float pipePairsInterval;
         public float pipePairOffsetY;
-        public float startPositionX;
-        public float warpPositionX;
     }
 }

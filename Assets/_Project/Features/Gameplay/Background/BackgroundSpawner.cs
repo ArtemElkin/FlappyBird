@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using _Project.Core.Data;
 using _Project.Core.Infrastructure.Config;
+using _Project.Core.Tools;
 using _Project.Features.Gameplay.Chunk;
 using _Project.Features.Gameplay.Signals;
 using UnityEngine;
@@ -22,6 +23,7 @@ namespace _Project.Features.Gameplay.Background
         private readonly IConfigProvider _configProvider;
         private readonly IInstantiator _instantiator;
         private readonly SignalBus _signalBus;
+        private readonly ScreenBoundsCalculator _screenBoundsCalculator;
 
         
         public BackgroundSpawner(
@@ -31,7 +33,8 @@ namespace _Project.Features.Gameplay.Background
             BackgroundLayerComponent backgroundLayerPrefab,
             Transform parentTransform,
             BackgroundWarper backgroundWarper,
-            PlayerModel playerModel)
+            PlayerModel playerModel,
+            ScreenBoundsCalculator screenBoundsCalculator)
         {
             _configProvider = configProvider;
             _instantiator = instantiator;
@@ -40,6 +43,7 @@ namespace _Project.Features.Gameplay.Background
             _parentTransform = parentTransform;
             _backgroundWarper = backgroundWarper;
             _playerModel = playerModel;
+            _screenBoundsCalculator = screenBoundsCalculator;
         }
         
         public void Initialize()
@@ -54,7 +58,11 @@ namespace _Project.Features.Gameplay.Background
             {
                 firstBackgrounds.Add(group.First.Value);
             }
-            _backgroundWarper.Setup(firstBackgrounds);
+            
+            var backgroundWidth = _backgroundLayers[0].sprite.rect.width / _backgroundLayers[0].sprite.pixelsPerUnit;
+            var warpPosX = _screenBoundsCalculator.LeftEdgeX - backgroundWidth;
+            
+            _backgroundWarper.Setup(firstBackgrounds, warpPosX);
         }
 
         private void SpawnBackground()

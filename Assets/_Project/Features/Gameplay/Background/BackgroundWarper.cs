@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using _Project.Core.Infrastructure.Config;
+using _Project.Core.Tools;
 using _Project.Features.Gameplay.Chunk;
 using _Project.Features.Gameplay.Signals;
 using Zenject;
@@ -10,30 +11,30 @@ namespace _Project.Features.Gameplay.Background
 {
     public class BackgroundWarper : IInitializable, IDisposable, ITickable
     {
-        private float _warpPositionX;
+        private float _warpPosX;
         private List<BackgroundLayerComponent> _firstBackgrounds;
         private readonly SignalBus _signalBus;
         private readonly IConfigProvider _configProvider;
+        private readonly ScreenBoundsCalculator _screenBoundsCalculator;
         
         
         public BackgroundWarper(
             SignalBus signalBus,
-            IConfigProvider configProvider)
+            ScreenBoundsCalculator screenBoundsCalculator)
         {
             _signalBus = signalBus;
-            _configProvider = configProvider;
+            _screenBoundsCalculator = screenBoundsCalculator;
         }
         
         public void Initialize()
         {
             _signalBus.Subscribe<FirstBackgroundChangedSignal>(OnFirstBackgroundChanged);
-            var config = _configProvider.GetConfigFromJson<ChunkConfig>("ChunkConfig");
-            _warpPositionX = config.warpPositionX;
         }
 
-        public void Setup(List<BackgroundLayerComponent> firstBackgrounds)
+        public void Setup(List<BackgroundLayerComponent> firstBackgrounds, float warpPosX)
         {
             _firstBackgrounds = firstBackgrounds;
+            _warpPosX = warpPosX;
         }
 
         public void Tick()
@@ -46,7 +47,7 @@ namespace _Project.Features.Gameplay.Background
             for (int i = _firstBackgrounds.Count - 1; i >= 0; i--)
             {
                 var pos = _firstBackgrounds[i].transform.localPosition;
-                if (pos.x < _warpPositionX)
+                if (pos.x < _warpPosX)
                 {
                     _signalBus.Fire<BackgroundInWarpZoneSignal>(new BackgroundInWarpZoneSignal(_firstBackgrounds[i]));
                 }

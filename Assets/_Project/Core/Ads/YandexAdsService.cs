@@ -81,45 +81,33 @@ namespace _Project.Core.Ads
 
         public void ShowRewarded(Action onRewardSuccess)
         {
-            if (IsRewardedReady())
+            if (!IsRewardedReady())
             {
-                _rewardedAd.Show();
+                Debug.LogWarning("[Yandex Ads] Rewarded not ready yet!");
+                return;
+            }
+            bool isRewardEarned = false;
+            _rewardedAd.OnRewarded += (sender, args) => 
+            {
+                isRewardEarned = true;
+                Debug.Log("[Yandex Ads] Пользователь досмотрел до конца!");
+            };
+
+            _rewardedAd.OnAdDismissed += (sender, args) => 
+            {
+                Debug.Log("[Yandex Ads] Реклама закрыта.");
+                if (isRewardEarned)
+                {
+                    onRewardSuccess?.Invoke();
+                }
                 _ = LoadRewarded();
-            }
-            else
+            };
+            _rewardedAd.OnAdFailedToShow += (sender, args) => 
             {
-                Debug.LogWarning("Yandex Ads: Rewarded not ready yet!");
-            }
-            
-            if (IsRewardedReady())
-            {
-                bool isRewardEarned = false;
-
-                _rewardedAd.OnRewarded += (sender, args) => 
-                {
-                    isRewardEarned = true;
-                    Debug.Log("[Yandex Ads] Пользователь досмотрел до конца!");
-                };
-
-                _rewardedAd.OnAdDismissed += (sender, args) => 
-                {
-                    if (isRewardEarned)
-                    {
-                        onRewardSuccess?.Invoke();
-                    }
-            
-                    _ = LoadRewarded();
-                    Debug.Log("[Yandex Ads] Реклама закрыта, играем дальше.");
-                };
-
-                _rewardedAd.OnAdFailedToShow += (sender, args) => 
-                {
-                    Debug.LogError($"[Yandex Ads] Не удалось показать: {args.Message}");
-                    _ = LoadRewarded();
-                };
-
-                _rewardedAd.Show();
-            }
+                Debug.LogError($"[Yandex Ads] Не удалось показать: {args.Message}");
+                _ = LoadRewarded();
+            };
+            _rewardedAd.Show();
         }
 
         public void ShowBanner()

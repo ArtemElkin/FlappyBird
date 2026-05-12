@@ -106,6 +106,7 @@ namespace _Project.Features.UI.MainMenu.Shop
                 {
                     _playerModel.UnlockBackground(_currentShownBackgroundId);
                     _playerModel.Save();
+                    UpdateCard();
                 });
             }
             else

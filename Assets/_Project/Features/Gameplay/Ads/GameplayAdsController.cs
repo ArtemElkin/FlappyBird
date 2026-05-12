@@ -7,7 +7,7 @@ namespace _Project.Features.Gameplay.Ads
 {
     public class GameplayAdsController : IInitializable, IDisposable
     {
-        private const int DeathsPerAdInterval = 2;
+        private const int DeathsPerAdInterval = 3;
         private int _deathsFromLastAd;
         private SignalBus _signalBus;
         private IAdsService _adsService;
@@ -23,6 +23,7 @@ namespace _Project.Features.Gameplay.Ads
         {
             _signalBus.Subscribe<GameOverSignal>(OnGameOver);
             _signalBus.Subscribe<GameRestartedSignal>(OnGameRestarted);
+            _signalBus.Subscribe<MenuClickedSignal>(OnMenuClicked);
 
             _deathsFromLastAd = 0;
         }
@@ -43,10 +44,16 @@ namespace _Project.Features.Gameplay.Ads
             _adsService.HideBanner();
         }
 
+        private void OnMenuClicked()
+        {
+            _adsService.HideBanner();
+        }
+
         public void Dispose()
         {
             _signalBus.Unsubscribe<GameOverSignal>(OnGameOver);
             _signalBus.Unsubscribe<GameRestartedSignal>(OnGameRestarted);
+            _signalBus.Unsubscribe<MenuClickedSignal>(OnMenuClicked);
         }
     }
 }
