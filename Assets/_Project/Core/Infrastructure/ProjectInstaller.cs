@@ -85,9 +85,15 @@ namespace _Project.Core.Infrastructure
 
         private void BindAdsService()
         {
+#if UNITY_EDITOR
+            Container
+                .BindInterfacesAndSelfTo<MockAdsService>()
+                .AsSingle();
+#else
             Container
                 .BindInterfacesAndSelfTo<YandexAdsService>()
                 .AsSingle();
+#endif
         }
     }
 }

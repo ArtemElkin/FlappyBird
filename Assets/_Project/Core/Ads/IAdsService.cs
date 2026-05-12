@@ -1,22 +1,17 @@
 using System;
+using System.Threading.Tasks;
 
 namespace _Project.Core.Ads
 {
     public interface IAdsService
     {
-        // Загрузка
-        void LoadInterstitial();
-        void LoadRewarded();
-
-        // Проверка готовности
+        Task LoadInterstitial();
+        Task LoadRewarded();
         bool IsInterstitialReady();
         bool IsRewardedReady();
-
-        // Показ
+        bool IsBannerReady();
         void ShowInterstitial();
-        void ShowRewarded(Action onRewardSuccess); // Callback для выдачи золота/жизней
-
-        // Баннеры
+        void ShowRewarded(Action onRewardSuccess);
         void ShowBanner();
         void HideBanner();
     }

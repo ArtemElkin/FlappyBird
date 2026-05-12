@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using YandexMobileAds;
 using YandexMobileAds.Base;
@@ -6,55 +7,125 @@ using Zenject;
 
 namespace _Project.Core.Ads
 {
-    public class YandexAdsService : IAdsService, IInitializable
+    public class YandexAdsService : IAdsService, IInitializable, IDisposable
     {
-        private Banner _banner;
-        private string _adUnitId;
+        private const string BannerAdUnitId = "demo-banner-yandex";
+        private const string InterstitialAdUnitId = "demo-interstitial-yandex";
+        private const string RewardedAdUnitId = "demo-rewarded-yandex";
+        private Banner _bannerAd;
+        private Interstitial _interstitialAd;
+        private RewardedAd _rewardedAd;
+        private InterstitialAdLoader _interstitialAdLoader;
+        private RewardedAdLoader _rewardedAdLoader;
+        public bool IsInterstitialReady() => _interstitialAd != null;
+        public bool IsRewardedReady() => _rewardedAd != null;
+        public bool IsBannerReady() => _bannerAd != null;
+        
         
         
         public void Initialize()
         {
             YandexAds.SetAgeRestricted(true);
-            _adUnitId = "demo-banner-yandex";
+            
+            _interstitialAdLoader = new InterstitialAdLoader();
+            _rewardedAdLoader = new RewardedAdLoader();
             
             RequestBanner();
+            _ = LoadInterstitial();
+            _ = LoadRewarded();
+            
         }
         
-        public void LoadInterstitial()
+        public async Task LoadInterstitial()
         {
-            throw new NotImplementedException();
+            DestroyInterstitial();
+            try
+            {
+                Debug.Log("Yandex Ads: Start loading interstitial...");
+                _interstitialAd = await _interstitialAdLoader.LoadAd(new AdRequest(InterstitialAdUnitId));
+                Debug.Log("Yandex Ads: Interstitial loaded successfully");
+            }
+            catch (AdLoadingException e)
+            {
+                Debug.LogError($"Yandex Ads: Interstitial failed to load: {e.Message}");
+            }
         }
 
-        public void LoadRewarded()
+        public async Task LoadRewarded()
         {
-            throw new NotImplementedException();
-        }
-
-        public bool IsInterstitialReady()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsRewardedReady()
-        {
-            throw new NotImplementedException();
+            DestroyRewarded();
+            try
+            {
+                _rewardedAd = await _rewardedAdLoader.LoadAd(new AdRequest(RewardedAdUnitId));
+            }
+            catch (AdLoadingException e)
+            {
+                // Ad failed to load with {e.Message}
+                // Attempting to load a new ad from catch block is strongly discouraged.
+            }
         }
 
         public void ShowInterstitial()
         {
-            throw new NotImplementedException();
+            if (IsInterstitialReady())
+            {
+                _interstitialAd.Show();
+                _ = LoadInterstitial();
+            }
+            else
+            {
+                Debug.LogWarning("Yandex Ads: Interstitial not ready yet!");
+            }
         }
 
         public void ShowRewarded(Action onRewardSuccess)
         {
-            throw new NotImplementedException();
+            if (IsRewardedReady())
+            {
+                _rewardedAd.Show();
+                _ = LoadRewarded();
+            }
+            else
+            {
+                Debug.LogWarning("Yandex Ads: Rewarded not ready yet!");
+            }
+            
+            if (IsRewardedReady())
+            {
+                bool isRewardEarned = false;
+
+                _rewardedAd.OnRewarded += (sender, args) => 
+                {
+                    isRewardEarned = true;
+                    Debug.Log("[Yandex Ads] Пользователь досмотрел до конца!");
+                };
+
+                _rewardedAd.OnAdDismissed += (sender, args) => 
+                {
+                    if (isRewardEarned)
+                    {
+                        onRewardSuccess?.Invoke();
+                    }
+            
+                    _ = LoadRewarded();
+                    Debug.Log("[Yandex Ads] Реклама закрыта, играем дальше.");
+                };
+
+                _rewardedAd.OnAdFailedToShow += (sender, args) => 
+                {
+                    Debug.LogError($"[Yandex Ads] Не удалось показать: {args.Message}");
+                    _ = LoadRewarded();
+                };
+
+                _rewardedAd.Show();
+            }
         }
 
         public void ShowBanner()
         {
-            if (_banner != null)
+            if (IsBannerReady())
             {
-                _banner.Show();
+                _bannerAd.Show();
             }
             else
             {
@@ -64,7 +135,7 @@ namespace _Project.Core.Ads
         
         public void HideBanner()
         {
-            _banner?.Hide();
+            _bannerAd?.Hide();
         }
         
         private int GetScreenWidthDp()
@@ -99,19 +170,49 @@ namespace _Project.Core.Ads
             BannerAdSize bannerSize = BannerAdSize.Sticky(GetScreenWidthDp());
             // Or set inline banner maximum width and height
             // BannerAdSize bannerSize = BannerAdSize.Inline(GetScreenWidthDp(), 300);
-            this._banner = new Banner(bannerSize, AdPosition.BottomCenter);
+            _bannerAd = new Banner(bannerSize, AdPosition.BottomCenter);
 
-            this._banner.OnAdLoaded += this.HandleAdLoaded;
-            this._banner.OnAdFailedToLoad += this.HandleAdFailedToLoad;
-            this._banner.OnAdClicked += this.HandleAdClicked;
-            this._banner.OnImpression += this.HandleImpression;
-
-            this._banner.LoadAd(this.CreateAdRequest(_adUnitId));
+            _bannerAd.OnAdLoaded += HandleAdLoaded;
+            _bannerAd.OnAdFailedToLoad += HandleAdFailedToLoad;
+            _bannerAd.OnAdClicked += HandleAdClicked;
+            _bannerAd.OnImpression += HandleImpression;
+            
+            var request = new AdRequest(BannerAdUnitId);
+            
+            _bannerAd.LoadAd(request);
         }
-        
-        private AdRequest CreateAdRequest(string adUnitId)
+
+        private void DestroyBanner()
         {
-            return new AdRequest(adUnitId);
+            if (_bannerAd != null)
+            {
+                _bannerAd.Destroy();
+                _bannerAd = null;
+            }
+        }
+
+        private void DestroyInterstitial()
+        {
+            if (_interstitialAd != null)
+            {
+                _interstitialAd.Destroy();
+                _interstitialAd = null;
+            }
+        }
+
+        private void DestroyRewarded()
+        {
+            if (_rewardedAd != null)
+            {
+                _rewardedAd.Destroy();
+                _rewardedAd = null;
+            }
+        }
+        public void Dispose()
+        {
+            DestroyBanner();
+            DestroyInterstitial();
+            DestroyRewarded();
         }
     }
 }
