@@ -31,6 +31,7 @@ namespace _Project.Core.Ads
             _rewardedAdLoader = new RewardedAdLoader();
             
             RequestBanner();
+            HideBanner();
             _ = LoadInterstitial();
             _ = LoadRewarded();
             
