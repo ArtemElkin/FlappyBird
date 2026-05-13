@@ -1,10 +1,12 @@
 using System;
 using System.Threading.Tasks;
 
+
 namespace _Project.Core.Ads
 {
     public interface IAdsService
     {
+        void Initialize();
         Task LoadInterstitial();
         Task LoadRewarded();
         bool IsInterstitialReady();

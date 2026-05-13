@@ -7,7 +7,7 @@ using Zenject;
 
 namespace _Project.Core.Ads
 {
-    public class YandexAdsService : IAdsService, IInitializable, IDisposable
+    public class YandexAdsService : IAdsService, IDisposable
     {
         private const string BannerAdUnitId = "demo-banner-yandex";
         private const string InterstitialAdUnitId = "demo-interstitial-yandex";

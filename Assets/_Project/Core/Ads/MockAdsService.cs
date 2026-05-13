@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
-using Zenject;
+
 
 namespace _Project.Core.Ads
 {
-    public class MockAdsService : IAdsService, IInitializable, IDisposable
+    public class MockAdsService : IAdsService, IDisposable
     {
         public void Initialize()
         {
