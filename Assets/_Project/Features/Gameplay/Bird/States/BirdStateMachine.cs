@@ -22,7 +22,7 @@ namespace _Project.Features.Gameplay.Bird.States
         {
             if (!_states.ContainsKey(typeof(T)))
             {
-                return;
+                throw new Exception($"State of type {typeof(T)} does not exist");
             }
             
             ActiveState?.Exit();

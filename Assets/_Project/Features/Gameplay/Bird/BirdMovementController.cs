@@ -36,15 +36,14 @@ namespace _Project.Features.Gameplay.Bird
         
         public void Jump()
         {
-            if (_birdStateMachine.ActiveState is IJumpableState jumpableState)
-            {
-                jumpableState.Jump();
-            }
-            else if (_birdStateMachine.ActiveState is GlidingState)
+            if (_birdStateMachine.ActiveState is GlidingState)
             {
                 _birdStateMachine.EnterState<FlyingState>();
                 _signalBus.Fire<BirdActivatedSignal>();
-                Jump();
+            }
+            if (_birdStateMachine.ActiveState is IJumpableState jumpableState)
+            {
+                jumpableState.Jump();
             }
         }
 
