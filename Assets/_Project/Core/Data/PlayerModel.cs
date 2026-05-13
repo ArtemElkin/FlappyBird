@@ -8,13 +8,12 @@ using Zenject;
 
 namespace _Project.Core.Data
 {
-    public class PlayerModel : IInitializable, IDisposable
+    public class PlayerModel : IInitializable
     {
         public event Action<int> OnCurrentScoreChanged;
         public event Action<int> OnCoinsChanged;
         private int _currentScore;
         private PlayerSave _playerSave;
-        private readonly SignalBus _signalBus;
         private readonly ISaveService _saveService;
         public int MaxScore => _playerSave.maxScore;
         public int Coins =>  _playerSave.coins;
@@ -34,18 +33,14 @@ namespace _Project.Core.Data
         public List<int> UnlockedBackgroundIds => _playerSave.unlockedBackgroundIds;
 
 
-        public PlayerModel(ISaveService saveService, SignalBus signalBus)
+        public PlayerModel(ISaveService saveService)
         {
             _saveService = saveService;
-            _signalBus = signalBus;
+            _playerSave = new PlayerSave();
         }
 
         public void Initialize()
         {
-            _signalBus.Subscribe<GameOverSignal>(OnGameOver);
-            _signalBus.Subscribe<GameRestartedSignal>(ResetCurrentScore);
-            
-            Load();
             ResetCurrentScore();
         }
 
@@ -98,21 +93,9 @@ namespace _Project.Core.Data
         {
             _saveService.Save(_playerSave);
         }
-        private void Load()
+        public void Load(PlayerSave playerSave)
         {
-            _playerSave = _saveService.Load<PlayerSave>() ?? new PlayerSave();
-        }
-
-        private void OnGameOver()
-        {
-            TryUpdateMaxScore(CurrentScore);
-            Save();
-        }
-
-        public void Dispose()
-        {
-            _signalBus.Unsubscribe<GameOverSignal>(OnGameOver);
-            _signalBus.Unsubscribe<GameRestartedSignal>(ResetCurrentScore);
+            _playerSave = playerSave;
         }
     }
 }
