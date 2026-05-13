@@ -135,22 +135,22 @@ namespace _Project.Core.Ads
 
         private void HandleImpression(object sender, ImpressionData e)
         {
-            throw new NotImplementedException();
+            Debug.Log("Yandex Ads: Impression event received");
         }
 
         private void HandleAdClicked(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Debug.Log("Yandex Ads: Click event received");
         }
 
         private void HandleAdFailedToLoad(object sender, AdFailureEventArgs e)
         {
-            throw new NotImplementedException();
+            Debug.Log("Yandex Ads: Ad failed to load");
         }
 
         private void HandleAdLoaded(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Debug.Log("Yandex Ads: Ad loaded");
         }
         
         private void RequestBanner()
