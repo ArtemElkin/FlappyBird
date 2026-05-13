@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using _Project.Core.Ads;
-using _Project.Core.Data;
 using _Project.Core.Infrastructure.Config;
 using _Project.Core.Infrastructure.Save;
+using _Project.Core.Player;
 using _Project.Features.Gameplay.Background;
 using _Project.Features.UI.MainMenu.Shop.Buttons;
 using _Project.Features.UI.Signals;

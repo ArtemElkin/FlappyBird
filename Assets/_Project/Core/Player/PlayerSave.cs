@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using _Project.Core.Infrastructure.Save;
 
 
-namespace _Project.Core.Data
+namespace _Project.Core.Player
 {
     public class PlayerSave : ISave
     {

@@ -1,4 +1,4 @@
-using _Project.Core.Data;
+using _Project.Core.Player;
 using TMPro;
 using UnityEngine;
 using Zenject;

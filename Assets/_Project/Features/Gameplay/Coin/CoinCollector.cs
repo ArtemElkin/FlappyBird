@@ -1,5 +1,5 @@
 using System;
-using _Project.Core.Data;
+using _Project.Core.Player;
 using _Project.Features.Gameplay.Signals;
 using Zenject;
 

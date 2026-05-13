@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using _Project.Core.Data;
 using _Project.Core.Infrastructure.Config;
+using _Project.Core.Player;
 using _Project.Core.Tools;
 using _Project.Features.Gameplay.Chunk;
 using _Project.Features.Gameplay.Signals;

@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using _Project.Core.Infrastructure.Save;
-using _Project.Core.Signals;
-using UnityEngine;
 using Zenject;
 
 
-namespace _Project.Core.Data
+namespace _Project.Core.Player
 {
     public class PlayerModel : IInitializable
     {
