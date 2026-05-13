@@ -7,7 +7,7 @@ namespace _Project.Core.Ads
 {
     public class MockAdsService : IAdsService, IDisposable
     {
-        public void Initialize()
+        public void Initialize(AdUnitsIdsConfig config)
         {
             Debug.Log("MockAdsService.Initialize");
         }

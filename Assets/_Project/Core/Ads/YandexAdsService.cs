@@ -9,9 +9,9 @@ namespace _Project.Core.Ads
 {
     public class YandexAdsService : IAdsService, IDisposable
     {
-        private const string BannerAdUnitId = "demo-banner-yandex";
-        private const string InterstitialAdUnitId = "demo-interstitial-yandex";
-        private const string RewardedAdUnitId = "demo-rewarded-yandex";
+        private string _bannerAdUnitId = "demo-banner-yandex";
+        private string _interstitialAdUnitId = "demo-interstitial-yandex";
+        private string _rewardedAdUnitId = "demo-rewarded-yandex";
         private Banner _bannerAd;
         private Interstitial _interstitialAd;
         private RewardedAd _rewardedAd;
@@ -23,8 +23,13 @@ namespace _Project.Core.Ads
         
         
         
-        public void Initialize()
+        public void Initialize(AdUnitsIdsConfig config)
         {
+            _bannerAdUnitId = config.bannerAdUnitId;
+            _interstitialAdUnitId = config.interstitialAdUnitId;
+            _rewardedAdUnitId = config.rewardedAdUnitId;
+            
+            
             YandexAds.SetAgeRestricted(true);
             
             _interstitialAdLoader = new InterstitialAdLoader();
@@ -43,7 +48,7 @@ namespace _Project.Core.Ads
             try
             {
                 Debug.Log("Yandex Ads: Start loading interstitial...");
-                _interstitialAd = await _interstitialAdLoader.LoadAd(new AdRequest(InterstitialAdUnitId));
+                _interstitialAd = await _interstitialAdLoader.LoadAd(new AdRequest(_interstitialAdUnitId));
                 Debug.Log("Yandex Ads: Interstitial loaded successfully");
             }
             catch (AdLoadingException e)
@@ -57,12 +62,11 @@ namespace _Project.Core.Ads
             DestroyRewarded();
             try
             {
-                _rewardedAd = await _rewardedAdLoader.LoadAd(new AdRequest(RewardedAdUnitId));
+                _rewardedAd = await _rewardedAdLoader.LoadAd(new AdRequest(_rewardedAdUnitId));
             }
             catch (AdLoadingException e)
             {
-                // Ad failed to load with {e.Message}
-                // Attempting to load a new ad from catch block is strongly discouraged.
+                Debug.LogError($"Yandex Ads: Rewarded failed to load: {e.Message}");
             }
         }
 
@@ -166,7 +170,7 @@ namespace _Project.Core.Ads
             _bannerAd.OnAdClicked += HandleAdClicked;
             _bannerAd.OnImpression += HandleImpression;
             
-            var request = new AdRequest(BannerAdUnitId);
+            var request = new AdRequest(_bannerAdUnitId);
             
             _bannerAd.LoadAd(request);
         }
