@@ -403,6 +403,7 @@ GameObject:
   m_Component:
   - component: {fileID: 172599115}
   - component: {fileID: 172599114}
+  - component: {fileID: 172599116}
   m_Layer: 0
   m_Name: BottomBorder
   m_TagString: Obstacle
@@ -470,6 +471,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 886432306}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &172599116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172599113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270928babbc8402cb9b40ec71917118e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &232623565
 GameObject:
   m_ObjectHideFlags: 0
@@ -480,6 +493,7 @@ GameObject:
   m_Component:
   - component: {fileID: 232623567}
   - component: {fileID: 232623566}
+  - component: {fileID: 232623568}
   m_Layer: 0
   m_Name: TopBorder
   m_TagString: Obstacle
@@ -547,6 +561,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 886432306}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &232623568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232623565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270928babbc8402cb9b40ec71917118e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &398803823
 GameObject:
   m_ObjectHideFlags: 0

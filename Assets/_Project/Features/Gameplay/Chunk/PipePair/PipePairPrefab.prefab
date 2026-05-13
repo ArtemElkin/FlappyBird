@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 110857340927363813}
   - component: {fileID: 8230656118032825134}
   - component: {fileID: 7546396331487379435}
+  - component: {fileID: 6896631553892931767}
   m_Layer: 0
   m_Name: PipeRim
-  m_TagString: Obstacle
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -130,6 +131,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.67, y: 0.74399084}
   m_EdgeRadius: 0
+--- !u!114 &6896631553892931767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332292031734853206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270928babbc8402cb9b40ec71917118e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2883802701629561224
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,9 +201,10 @@ GameObject:
   - component: {fileID: 7308731565853922016}
   - component: {fileID: 6229012369327241466}
   - component: {fileID: 5512613153725749334}
+  - component: {fileID: 6488432768029011763}
   m_Layer: 0
   m_Name: PipeBody (1)
-  m_TagString: Obstacle
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -308,6 +322,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.4, y: 10}
   m_EdgeRadius: 0
+--- !u!114 &6488432768029011763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3991488717394316543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270928babbc8402cb9b40ec71917118e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4779692268474609285
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,9 +345,10 @@ GameObject:
   - component: {fileID: 4509097070033970487}
   - component: {fileID: 8653328999969828193}
   - component: {fileID: 7910493385114988480}
+  - component: {fileID: 8809444957684033352}
   m_Layer: 0
   m_Name: PipeRim
-  m_TagString: Obstacle
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -438,6 +465,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.67, y: 0.74399084}
   m_EdgeRadius: 0
+--- !u!114 &8809444957684033352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4779692268474609285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270928babbc8402cb9b40ec71917118e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5355367531414248346
 GameObject:
   m_ObjectHideFlags: 0
@@ -448,9 +487,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1122308075551527417}
   - component: {fileID: 3329914098705082395}
+  - component: {fileID: 915357459597279312}
   m_Layer: 0
   m_Name: GapCollider
-  m_TagString: Gap
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -515,6 +555,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 5.88}
   m_EdgeRadius: 0
+--- !u!114 &915357459597279312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5355367531414248346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c83a009ada949ddbd1d3a68bd26b466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6189183018270344299
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,9 +578,10 @@ GameObject:
   - component: {fileID: 4095048045709838762}
   - component: {fileID: 3461756804500584974}
   - component: {fileID: 7710299896442557492}
+  - component: {fileID: 2493160749604193456}
   m_Layer: 0
   m_Name: PipeBody
-  m_TagString: Obstacle
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -646,3 +699,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.4, y: 10}
   m_EdgeRadius: 0
+--- !u!114 &2493160749604193456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6189183018270344299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270928babbc8402cb9b40ec71917118e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
