@@ -11,6 +11,7 @@ namespace _Project.Features.Gameplay.Bird
 {
     public class BirdMovementController : IJumpable, IInitializable, IDisposable
     {
+        private bool _isMoving;
         private readonly IInputService _inputService;
         private readonly SignalBus _signalBus;
         private readonly BirdStateMachine  _birdStateMachine;
@@ -30,6 +31,7 @@ namespace _Project.Features.Gameplay.Bird
         {
             _signalBus.Subscribe<GameOverSignal>(OnGameOver);
             _signalBus.Subscribe<GameRestartedSignal>(OnGameRestarted);
+            _isMoving = true;
             _inputService.JumpPressed += Jump;
             _birdStateMachine.EnterState<GlidingState>();
         }
@@ -49,21 +51,22 @@ namespace _Project.Features.Gameplay.Bird
 
         public Vector3 CalculateNewLocalPosition(Vector3 currentPos, float fixedDeltaTime)
         {
-            return _birdStateMachine.ActiveState.CalculateNewLocalPosition(currentPos, fixedDeltaTime);
+            return _isMoving ? _birdStateMachine.ActiveState.CalculateNewLocalPosition(currentPos, fixedDeltaTime) : currentPos;
         }
 
         public Quaternion CalculateNewLocalRotation(Quaternion currentRotation, float fixedDeltaTime)
         {
-            return _birdStateMachine.ActiveState.CalculateNewLocalRotation(currentRotation, fixedDeltaTime);
+            return _isMoving? _birdStateMachine.ActiveState.CalculateNewLocalRotation(currentRotation, fixedDeltaTime) :  currentRotation;
         }
 
         private void OnGameOver()
         {
-            _birdStateMachine.EnterState<DeadState>();
+            _isMoving = false;
         }
 
         private void OnGameRestarted()
         {
+            _isMoving = true;
             _birdStateMachine.EnterState<GlidingState>();
         }
 
