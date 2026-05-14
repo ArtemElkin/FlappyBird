@@ -11,8 +11,6 @@ namespace _Project.Features.Gameplay.Bird
 {
     public class BirdComponent : MonoBehaviour
     {
-        private BirdMovementController _movementController;
-        private Rigidbody2D _rb;
         private SignalBus _signalBus;
         
         
@@ -21,18 +19,10 @@ namespace _Project.Features.Gameplay.Bird
             BirdMovementController movementController,
             SignalBus signalBus)
         {
-            _movementController = movementController;
             _signalBus = signalBus;
-            _rb = GetComponent<Rigidbody2D>();
-        }
-
-        private void FixedUpdate()
-        {
-            var newPosition = _movementController.CalculateNewLocalPosition(transform.localPosition, Time.fixedDeltaTime);
-            _rb.MovePosition(newPosition);
+            var rb = GetComponent<Rigidbody2D>();
             
-            var newRotation = _movementController.CalculateNewLocalRotation(transform.localRotation, Time.fixedDeltaTime);
-            _rb.MoveRotation(newRotation);
+            movementController.Setup(transform, rb);
         }
 
         private void OnTriggerEnter2D(Collider2D collision)

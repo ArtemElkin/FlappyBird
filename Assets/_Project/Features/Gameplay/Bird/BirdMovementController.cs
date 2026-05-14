@@ -9,9 +9,11 @@ using Zenject;
 
 namespace _Project.Features.Gameplay.Bird
 {
-    public class BirdMovementController : IJumpable, IInitializable, IDisposable
+    public class BirdMovementController : IJumpable, IInitializable, IDisposable, IFixedTickable
     {
         private bool _isMoving;
+        private Transform _birdTransform;
+        private Rigidbody2D _rb;
         private readonly IInputService _inputService;
         private readonly SignalBus _signalBus;
         private readonly BirdStateMachine  _birdStateMachine;
@@ -31,9 +33,26 @@ namespace _Project.Features.Gameplay.Bird
         {
             _signalBus.Subscribe<GameOverSignal>(OnGameOver);
             _signalBus.Subscribe<GameRestartedSignal>(OnGameRestarted);
-            _isMoving = true;
             _inputService.JumpPressed += Jump;
-            _birdStateMachine.EnterState<GlidingState>();
+        }
+
+        public void Setup(Transform birdTransform, Rigidbody2D rb)
+        {
+            _birdTransform = birdTransform;
+            _rb = rb;
+            
+            Reset();
+        }
+
+        public void FixedTick()
+        {
+            if (!_isMoving) return;
+            
+            var newPosition = CalculateNewLocalPosition(Time.fixedDeltaTime);
+            _rb.MovePosition(newPosition);
+            
+            var newRotation = CalculateNewLocalRotation(Time.fixedDeltaTime);
+            _rb.MoveRotation(newRotation);
         }
         
         public void Jump()
@@ -49,14 +68,24 @@ namespace _Project.Features.Gameplay.Bird
             }
         }
 
-        public Vector3 CalculateNewLocalPosition(Vector3 currentPos, float fixedDeltaTime)
+        private Vector3 CalculateNewLocalPosition(float fixedDeltaTime)
         {
-            return _isMoving ? _birdStateMachine.ActiveState.CalculateNewLocalPosition(currentPos, fixedDeltaTime) : currentPos;
+            return _birdStateMachine.ActiveState.CalculateNewLocalPosition(_birdTransform.localPosition, fixedDeltaTime);
         }
 
-        public Quaternion CalculateNewLocalRotation(Quaternion currentRotation, float fixedDeltaTime)
+        private Quaternion CalculateNewLocalRotation(float fixedDeltaTime)
         {
-            return _isMoving? _birdStateMachine.ActiveState.CalculateNewLocalRotation(currentRotation, fixedDeltaTime) :  currentRotation;
+            return _birdStateMachine.ActiveState.CalculateNewLocalRotation(_birdTransform.localRotation, fixedDeltaTime);
+        }
+
+        private void Reset()
+        {
+            _birdTransform.localPosition = Vector3.zero;
+            _birdTransform.localRotation = Quaternion.identity;
+            _rb.velocity = Vector2.zero;
+            _rb.angularVelocity = 0f;
+            _isMoving = true;
+            _birdStateMachine.EnterState<GlidingState>();
         }
 
         private void OnGameOver()
@@ -67,6 +96,7 @@ namespace _Project.Features.Gameplay.Bird
         private void OnGameRestarted()
         {
             _isMoving = true;
+            Reset();
             _birdStateMachine.EnterState<GlidingState>();
         }
 
