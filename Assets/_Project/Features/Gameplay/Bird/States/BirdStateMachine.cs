@@ -10,12 +10,10 @@ namespace _Project.Features.Gameplay.Bird.States
         public IState ActiveState { get; private set; }
         
         
-        public BirdStateMachine(List<IState> states)
+        public BirdStateMachine()
         {
-            foreach (var state in states)
-            {
-                _states[state.GetType()] = state;
-            }
+            _states[typeof(GlidingState)] = new GlidingState();
+            _states[typeof(FlyingState)] = new FlyingState();
         }
         
         public void EnterState<T>() where T : class, IState

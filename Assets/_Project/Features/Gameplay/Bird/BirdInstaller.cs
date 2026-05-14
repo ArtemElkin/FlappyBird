@@ -16,8 +16,6 @@ namespace _Project.Features.Gameplay.Bird
             Container.DeclareSignal<BirdActivatedSignal>();
             Container.DeclareSignal<GapPassedSignal>();
             
-            Container.Bind<IState>().To<GlidingState>().AsSingle();
-            Container.Bind<IState>().To<FlyingState>().AsSingle();
             Container.Bind<BirdStateMachine>().AsSingle();
             
             BindBirdMovementController();
