@@ -8,10 +8,10 @@ namespace _Project.Core.Tools
 {
     public class CustomPool<T> where T : MonoBehaviour
     {
-        private T _prefab;
-        private List<T> _objects;
-        private Transform _defaultParentTransform;
-        private IInstantiator _instantiator;
+        private readonly T _prefab;
+        private readonly List<T> _objects;
+        private readonly Transform _defaultParentTransform;
+        private readonly IInstantiator _instantiator;
 
         
         public CustomPool(IInstantiator instantiator, T prefab, int prewarmObjects, Transform defaultParentTransform)
@@ -52,7 +52,7 @@ namespace _Project.Core.Tools
             obj.transform.SetParent(_defaultParentTransform);
         }
 
-        private T Create(Transform parentTransform = null)
+        private T Create()
         {
             var obj = _instantiator.InstantiatePrefabForComponent<T>(_prefab, _defaultParentTransform);
             _objects.Add(obj);
