@@ -5,7 +5,10 @@ namespace _Project.Core.Tools
 {
     public class ScreenBoundsCalculator
     {
-        private readonly Camera _camera = Camera.main;
+        private readonly Camera _camera;
+        
+        
+        public ScreenBoundsCalculator(Camera camera) => _camera = camera;
 
         public float RightEdgeX => _camera.transform.position.x + (_camera.orthographicSize * _camera.aspect);
         
