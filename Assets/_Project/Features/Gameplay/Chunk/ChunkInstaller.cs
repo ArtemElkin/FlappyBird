@@ -1,5 +1,6 @@
 using _Project.Core.Tools;
 using _Project.Features.Gameplay.Chunk.PipePair;
+using _Project.Features.Gameplay.Coin;
 using _Project.Features.Gameplay.Signals;
 using UnityEngine;
 using Zenject;
@@ -19,28 +20,49 @@ namespace _Project.Features.Gameplay.Chunk
             Container.DeclareSignal<ChunkInWarpZoneSignal>();
             Container.DeclareSignal<FirstChunkChangedSignal>();
             
+            BindPositionGenerator();
             BindPipePairFactory(_pipePairPrefab);
             BindChunkFactory(_chunkPrefab, _chunksParentTransform);
+            BindChunkBuilder();
             BindChunkSpawner();
-            BindChunkTeleporter();
+            BindChunkWarper();
             BindChunkMovementController();
-            BindPipePositionGenerator();
+        }
+        
+        private void BindPositionGenerator()
+        {
+            Container
+                .Bind<PositionGenerator>()
+                .AsSingle();
         }
 
         private void BindPipePairFactory(PipePairComponent pipePairPrefab)
         {
             Container
-                .Bind<PipePairFactory>()
+                .BindInterfacesAndSelfTo<PipePairFactory>()
                 .AsSingle()
                 .WithArguments(pipePairPrefab);
+            
+            Container
+                .BindExecutionOrder<PipePairFactory>(-30);
         }
-        
+       
         private void BindChunkFactory(ChunkComponent chunkPrefab, Transform chunksParentTransform)
         {
             Container
-                .Bind<ChunkFactory>()
+                .BindInterfacesAndSelfTo<ChunkFactory>()
                 .AsSingle()
                 .WithArguments(chunkPrefab, chunksParentTransform);
+            
+            Container
+                .BindInitializableExecutionOrder<ChunkFactory>(-20);
+        }
+
+        private void BindChunkBuilder()
+        {
+            Container
+                .Bind<ChunkBuilder>()
+                .AsSingle();
         }
 
         private void BindChunkSpawner()
@@ -53,7 +75,7 @@ namespace _Project.Features.Gameplay.Chunk
                 .BindInitializableExecutionOrder<ChunkSpawner>(-10);
         }
         
-        private void BindChunkTeleporter()
+        private void BindChunkWarper()
         {
             Container
                 .BindInterfacesAndSelfTo<ChunkWarper>()
@@ -67,13 +89,6 @@ namespace _Project.Features.Gameplay.Chunk
         {
             Container
                 .Bind<ChunkMovementCalculator>()
-                .AsSingle();
-        }
-
-        private void BindPipePositionGenerator()
-        {
-            Container
-                .Bind<PositionGenerator>()
                 .AsSingle();
         }
     }

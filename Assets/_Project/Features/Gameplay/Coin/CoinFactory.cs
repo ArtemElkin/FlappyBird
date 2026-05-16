@@ -1,13 +1,16 @@
+using System;
+using _Project.Core.Infrastructure.Config;
 using _Project.Core.Tools;
+using _Project.Features.Gameplay.Chunk;
 using UnityEngine;
 using Zenject;
 
 
 namespace _Project.Features.Gameplay.Coin
 {
-    public class CoinFactory
+    public class CoinFactory : IInitializable
     {
-        private CustomPool<CoinComponent> _goldPool;
+        private CustomPool<CoinComponent> _coinsPool;
         private readonly CoinComponent _coinPrefab;
         private readonly IInstantiator _instantiator;
         private readonly Transform _defaultParentTransform;
@@ -19,21 +22,22 @@ namespace _Project.Features.Gameplay.Coin
             _coinPrefab = coinPrefab;
             _defaultParentTransform = defaultParentTransform;
         }
-        
-        public void Setup(int preWarmGoldCount)
+
+        public void Initialize()
         {
-            _goldPool = new CustomPool<CoinComponent>(_instantiator, _coinPrefab, preWarmGoldCount, _defaultParentTransform);
+            _coinsPool = new CustomPool<CoinComponent>(_instantiator, _coinPrefab, defaultParentTransform: _defaultParentTransform);
         }
+        
         public CoinComponent Create(Vector3 localPosition, Transform parentTransform)
         {
-            var gold = _goldPool.Get(parentTransform);
-            gold.transform.localPosition = localPosition;
-            return gold;
+            var coin = _coinsPool.Get(parentTransform);
+            coin.transform.localPosition = localPosition;
+            return coin;
         }
 
         public void Release(CoinComponent coin)
         {
-            _goldPool.Release(coin);
+            _coinsPool.Release(coin);
         }
     }
 }

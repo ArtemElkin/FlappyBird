@@ -12,12 +12,12 @@ namespace _Project.Features.Gameplay.Chunk
 {
     public class ChunkComponent : MonoBehaviour
     {
+        private float _moveSpeed;
         public List<CoinComponent> Coins => _coins;
         public List<PipePairComponent> PipePairs => _pipePairs;
         private List<CoinComponent> _coins;
         private List<PipePairComponent> _pipePairs;
         private ChunkMovementCalculator _movementCalculator;
-        private ChunkConfig _config;
         private SignalBus _signalBus;
         private bool _movementIsActive;
         private Rigidbody2D _rb;
@@ -32,7 +32,7 @@ namespace _Project.Features.Gameplay.Chunk
         private void FixedUpdate()
         {
             if (!_movementIsActive) return;
-            var newPos = _movementCalculator.CalculateNewPosition(transform.localPosition, _config.moveSpeed,Time.fixedDeltaTime);
+            var newPos = _movementCalculator.CalculateNewPosition(transform.localPosition, _moveSpeed,Time.fixedDeltaTime);
             _rb.MovePosition(newPos);
         }
         
@@ -46,11 +46,11 @@ namespace _Project.Features.Gameplay.Chunk
             _rb = GetComponent<Rigidbody2D>();
         }
 
-        public void Setup(ChunkConfig config, List<PipePairComponent> pipePairs, List<CoinComponent> golds)
+        public void Setup(float moveSpeed, List<PipePairComponent> pipePairs, List<CoinComponent> coins)
         {
-            _config =  config;
+            _moveSpeed = moveSpeed;
             _pipePairs = pipePairs;
-            _coins = golds;
+            _coins = coins;
         }
 
         private void ActivateMovement() => _movementIsActive = true;

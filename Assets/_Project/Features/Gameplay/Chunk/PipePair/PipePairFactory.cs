@@ -1,14 +1,16 @@
+using _Project.Core.Tools;
 using UnityEngine;
 using Zenject;
 
 
 namespace _Project.Features.Gameplay.Chunk.PipePair
 {
-    public class PipePairFactory
+    public class PipePairFactory : IInitializable
     {
+        private CustomPool<PipePairComponent> _pipePairsPool;
         private readonly PipePairComponent _pipePairPrefab;
         private readonly IInstantiator _instantiator;
-         
+        
         
         public PipePairFactory(IInstantiator instantiator,PipePairComponent pipePairPrefab)
         {
@@ -16,11 +18,22 @@ namespace _Project.Features.Gameplay.Chunk.PipePair
             _pipePairPrefab = pipePairPrefab;
         }
 
+        public void Initialize()
+        {
+            _pipePairsPool = new CustomPool<PipePairComponent>(_instantiator, _pipePairPrefab);
+        }
+
         public PipePairComponent Create(Vector3 localPosition, Transform parent)
         {
-            var pipePair = _instantiator.InstantiatePrefabForComponent<PipePairComponent>(_pipePairPrefab, parent);
+            
+            var pipePair = _pipePairsPool.Get(parent);
             pipePair.transform.localPosition = localPosition;
             return pipePair;
+        }
+
+        public void Release(PipePairComponent pipePair)
+        {
+            _pipePairsPool.Release(pipePair);
         }
     }
 }

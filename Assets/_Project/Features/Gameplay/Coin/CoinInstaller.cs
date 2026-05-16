@@ -15,19 +15,22 @@ namespace _Project.Features.Gameplay.Coin
         {
             Container.DeclareSignal<CoinCollectedSignal>();
             
-            BindGoldFactory();
-            BindGoldCollector();
+            BindCoinFactory();
+            BindCoinsCollector();
         }
 
-        private void BindGoldFactory()
+        private void BindCoinFactory()
         {
             Container
-                .Bind<CoinFactory>()
+                .BindInterfacesAndSelfTo<CoinFactory>()
                 .AsSingle()
                 .WithArguments(_coinPrefab, _parentTransform);
+            
+            Container
+                .BindExecutionOrder<CoinFactory>(-30);
         }
 
-        private void BindGoldCollector()
+        private void BindCoinsCollector()
         {
             Container
                 .BindInterfacesAndSelfTo<CoinCollector>()

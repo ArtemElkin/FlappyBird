@@ -12,14 +12,12 @@ namespace _Project.Features.Gameplay.Chunk
         private float _warpPosX;
         private ChunkComponent _firstChunk;
         private ChunkConfig _chunkConfig;
-        private readonly IConfigProvider _configProvider;
         private readonly SignalBus _signalBus;
         private readonly ScreenBoundsCalculator _screenBoundsCalculator;
 
 
-        public ChunkWarper(IConfigProvider configProvider, SignalBus signalBus, ScreenBoundsCalculator screenBoundsCalculator)
+        public ChunkWarper(SignalBus signalBus, ScreenBoundsCalculator screenBoundsCalculator)
         {
-            _configProvider = configProvider;
             _signalBus = signalBus;
             _screenBoundsCalculator = screenBoundsCalculator;
         }
@@ -27,16 +25,12 @@ namespace _Project.Features.Gameplay.Chunk
         public void Initialize()
         {
             _signalBus.Subscribe<FirstChunkChangedSignal>(OnChunkWarped);
-            
-            _chunkConfig = _configProvider.GetConfigFromJson<ChunkConfig>("ChunkConfig");
-            var chunkWidth = _chunkConfig.pipePairsCount * _chunkConfig.pipePairsInterval;
-            _warpPosX = _screenBoundsCalculator.LeftEdgeX - chunkWidth / 2f;
-
         }
 
-        public void Setup(ChunkComponent firstChunk)
+        public void Setup(ChunkComponent firstChunk, float chunkWidth)
         {
             _firstChunk = firstChunk;
+            _warpPosX = _screenBoundsCalculator.LeftEdgeX - chunkWidth / 2f;
         }
 
         public void Tick()

@@ -14,38 +14,37 @@ namespace _Project.Features.Gameplay.Chunk
 {
     public class ChunkSpawner : IInitializable, IDisposable
     {
-        public LinkedList<ChunkComponent> Chunks => _chunks;
         private LinkedList<ChunkComponent> _chunks;
         private ChunkConfig _config;
-        private readonly int _chunksCount = 4;
+        private float _chunkWidth;
         private readonly IConfigProvider _configProvider;
-        private readonly PositionGenerator _positionGenerator;
-        private readonly ChunkFactory _chunkFactory;
         private readonly PipePairFactory _pipePairFactory;
         private readonly CoinFactory _coinFactory;
         private readonly SignalBus _signalBus;
         private readonly ChunkWarper _chunkWarper;
         private readonly ScreenBoundsCalculator _screenBoundsCalculator;
+        private readonly ChunkBuilder _chunkBuilder;
+        private readonly ChunkFactory _chunkFactory;
 
 
         public ChunkSpawner(
             IConfigProvider configProvider,
-            PipePairFactory pipePairFactory,
-            ChunkFactory chunkFactory,
             CoinFactory coinFactory,
-            PositionGenerator positionGenerator,
-            ChunkWarper chunkWarper,
             SignalBus signalBus,
-            ScreenBoundsCalculator screenBoundsCalculator)
+            ScreenBoundsCalculator screenBoundsCalculator,
+            ChunkBuilder chunkBuilder,
+            ChunkFactory chunkFactory,
+            PipePairFactory pipePairFactory,
+            ChunkWarper chunkWarper)
         {
             _configProvider = configProvider;
-            _pipePairFactory = pipePairFactory;
-            _chunkFactory = chunkFactory;
             _coinFactory = coinFactory;
-            _positionGenerator = positionGenerator;
             _signalBus = signalBus;
-            _chunkWarper = chunkWarper;
             _screenBoundsCalculator = screenBoundsCalculator;
+            _chunkBuilder = chunkBuilder;
+            _chunkFactory = chunkFactory;
+            _pipePairFactory = pipePairFactory;
+            _chunkWarper = chunkWarper;
         }
         
         public void Initialize()
@@ -54,94 +53,75 @@ namespace _Project.Features.Gameplay.Chunk
             _signalBus.Subscribe<GameRestartedSignal>(OnGameRestarted);
             
             _config = _configProvider.GetConfigFromJson<ChunkConfig>("ChunkConfig");
-            _coinFactory.Setup(_chunksCount * _config.pipePairsCount);
-            _chunkFactory.Setup(_chunksCount);
-            
-            _chunks =  SpawnChunks(_chunksCount, _config.pipePairsCount, _config.pipePairsInterval);
-            _chunkWarper.Setup(Chunks.First.Value);
-        }
 
-        public LinkedList<ChunkComponent> SpawnChunks(int chunkCount, int pipePairsCount, float pipePairsInterval)
+            _chunkBuilder
+                .SetSpeed(_config.moveSpeed)
+                .SetElementsPerChunk(_config.elementsPerChunk)
+                .SetIntervalBetweenElements(_config.intervalBetweenElements);
+            _chunks = new LinkedList<ChunkComponent>();
+            _chunkWidth = _config.elementsPerChunk * _config.intervalBetweenElements;
+            SpawnChunks();
+            _chunkWarper.Setup(_chunks.First.Value, _chunkWidth);
+        }
+        
+        private void SpawnChunks()
         {
-            var chunkWidth = pipePairsCount * pipePairsInterval;
-            var chunksLinkedList = new LinkedList<ChunkComponent>();
-            
-            for (int i = 0; i < chunkCount; i++)
+            for (int i = 0; i < _config.chunksCount; i++)
             {
-                var chunkLocalPosX = i * chunkWidth + _screenBoundsCalculator.RightEdgeX + chunkWidth / 2;
-                var chunk = _chunkFactory.Create(new Vector3(chunkLocalPosX, 0f, 0f));
-                var pipePairs = new List<PipePairComponent>();
-                var golds = new List<CoinComponent>();
+                var chunkLocalPosX = i * _chunkWidth + _screenBoundsCalculator.RightEdgeX + _chunkWidth / 2;
+                var chunk = _chunkBuilder
+                    .SetInitialPosition(new Vector3(chunkLocalPosX, 0f, 0f))
+                    .AddPipePairs(_config.maxElementOffsetY)
+                    .AddCoins(_config.maxElementOffsetY)
+                    .Build();
                 
-                for (int k = 0; k < pipePairsCount; k++)
-                {
-                    var posX = k * pipePairsInterval - ((pipePairsCount - 1) * pipePairsInterval) / 2f;
-                    var posY = _positionGenerator.GenerateRandomPositionY(_config.pipePairOffsetY);
-                    var pipePair = _pipePairFactory.Create(new Vector3(posX, posY, 0f), chunk.transform);
-                    pipePairs.Add(pipePair);
-                    
-                    posX += pipePairsInterval / 2f;
-                    posY = _positionGenerator.GenerateRandomPositionY(_config.pipePairOffsetY);
-                    var gold = _coinFactory.Create(new Vector3(posX, posY, 0f), chunk.transform);
-                    golds.Add(gold);
-                }
-                chunk.Setup(_config, pipePairs, golds);
-                chunksLinkedList.AddLast(chunk);
+                _chunks.AddLast(chunk);
             }
-            
-            return chunksLinkedList;
         }
         
         private void OnChunkInWarpZone(ChunkInWarpZoneSignal signal)
         {
             var chunk = signal.chunkToWarp;
-            var lastChunkPos = Chunks.Last.Value.transform.localPosition;
-            var posX = lastChunkPos.x + _config.pipePairsInterval * _config.pipePairsCount;
-            lastChunkPos = new Vector3(posX, lastChunkPos.y, lastChunkPos.z);
-            chunk.transform.localPosition = lastChunkPos;
-            Chunks.RemoveFirst();
-            Chunks.AddLast(chunk);
-            RespawnChunk(chunk);
-            _signalBus.Fire<FirstChunkChangedSignal>(new FirstChunkChangedSignal(newFirstChunk: Chunks.First.Value));
+            var lastChunkPos = _chunks.Last.Value.transform.localPosition;
+            var newPosX = lastChunkPos.x + _config.intervalBetweenElements * _config.elementsPerChunk;
+            var newPos = new Vector3(newPosX, lastChunkPos.y, lastChunkPos.z);
+            _chunks.RemoveFirst();
+            DespawnChunk(chunk);
+            var newChunk = _chunkBuilder
+                .SetInitialPosition(newPos)
+                .AddPipePairs(_config.maxElementOffsetY)
+                .AddCoins(_config.maxElementOffsetY)
+                .Build();
+            _chunks.AddLast(newChunk);
+            
+            _signalBus.Fire<FirstChunkChangedSignal>(new FirstChunkChangedSignal(newFirstChunk: _chunks.First.Value));
         }
         
-        private void RespawnChunk(ChunkComponent chunk)
+        private void DespawnChunk(ChunkComponent chunk)
         {
             foreach (var coin in chunk.Coins)
             {
                 _coinFactory.Release(coin);
             }
             chunk.Coins.Clear();
+
             foreach (var pipePair in chunk.PipePairs)
             {
-                var prevPos = pipePair.transform.localPosition;
-                var posY = _positionGenerator.GenerateRandomPositionY(_config.pipePairOffsetY);
-                pipePair.transform.localPosition = new Vector3(prevPos.x, posY, prevPos.z);
-
-                var posX = prevPos.x + _config.pipePairsInterval / 2f;
-                posY = _positionGenerator.GenerateRandomPositionY(_config.pipePairOffsetY);
-                var gold  = _coinFactory.Create(new Vector3(posX, posY, prevPos.z), chunk.transform);
-                chunk.Coins.Add(gold);
+                _pipePairFactory.Release(pipePair);
             }
+            chunk.PipePairs.Clear();
+            _chunkFactory.Release(chunk);
         }
 
         private void OnGameRestarted()
         {
-            var chunkWidth = _config.pipePairsCount * _config.pipePairsInterval;
-            List<ChunkComponent> chunks = new List<ChunkComponent>();
-            foreach (var ch in Chunks)
+            foreach (var chunk in _chunks)
             {
-                chunks.Add(ch);
+                DespawnChunk(chunk);
             }
-            Chunks.Clear();
-            for (int i = 0; i < _chunksCount; i++)
-            {
-                var chunkLocalPosX = i * chunkWidth + _screenBoundsCalculator.RightEdgeX + chunkWidth / 2;
-                chunks[i].transform.localPosition = new Vector3(chunkLocalPosX, 0f, 0f);
-                RespawnChunk(chunks[i]);
-                Chunks.AddLast(chunks[i]);
-            }
-            _signalBus.Fire<FirstChunkChangedSignal>(new FirstChunkChangedSignal(newFirstChunk: Chunks.First.Value));
+            _chunks.Clear();
+            SpawnChunks();
+            _signalBus.Fire<FirstChunkChangedSignal>(new FirstChunkChangedSignal(newFirstChunk: _chunks.First.Value));
         }
 
         public void Dispose()

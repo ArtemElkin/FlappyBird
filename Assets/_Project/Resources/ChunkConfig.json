@@ -1,6 +1,7 @@
 {
+  "chunksCount": 4,
   "moveSpeed": 2,
-  "pipePairsCount": 5,
-  "pipePairsInterval": 5,
-  "pipePairOffsetY": 3
+  "elementsPerChunk": 5,
+  "intervalBetweenElements": 5,
+  "maxElementOffsetY": 3
 }

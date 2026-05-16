@@ -1,3 +1,4 @@
+using System;
 using _Project.Core.Tools;
 using UnityEngine;
 using Zenject;
@@ -5,7 +6,7 @@ using Zenject;
 
 namespace _Project.Features.Gameplay.Chunk
 {
-    public class ChunkFactory
+    public class ChunkFactory : IInitializable
     {
         private CustomPool<ChunkComponent> _chunkPool;
         private readonly ChunkComponent _chunkPrefab;
@@ -20,9 +21,9 @@ namespace _Project.Features.Gameplay.Chunk
             _defaultParentTransform = parentTransform;
         }
 
-        public void Setup(int preWarmChunksCount)
+        public void Initialize()
         {
-            _chunkPool = new CustomPool<ChunkComponent>(_instantiator, _chunkPrefab, preWarmChunksCount, _defaultParentTransform);
+            _chunkPool = new CustomPool<ChunkComponent>(_instantiator, _chunkPrefab, defaultParentTransform: _defaultParentTransform);
         }
 
         public ChunkComponent Create(Vector3 localPosition)
@@ -30,6 +31,11 @@ namespace _Project.Features.Gameplay.Chunk
             var chunk = _chunkPool.Get();
             chunk.transform.localPosition = localPosition;
             return chunk;
+        }
+
+        public void Release(ChunkComponent chunk)
+        {
+            _chunkPool.Release(chunk);
         }
     }
 }
