@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using _Project.Core.Signals;
 using UnityEngine;
 using Zenject;
@@ -8,10 +9,12 @@ namespace _Project.Features.Gameplay.Background
     public class BackgroundLayerComponent : MonoBehaviour
     {
         public BackgroundLayer backgroundLayer;
+        private int _groupdId;
         private bool _movementIsActive;
         private SpriteRenderer _spriteRenderer;
         private BackgroundMovementCalculator _movementCalculator;
         private SignalBus _signalBus;
+        public int GroupId => _groupdId;
 
         
         private void OnEnable()
@@ -35,9 +38,10 @@ namespace _Project.Features.Gameplay.Background
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
-        public void Setup(BackgroundLayer backgroundLayerConfig)
+        public void Setup(BackgroundLayer backgroundLayerConfig, int groupId)
         {
             backgroundLayer = backgroundLayerConfig;
+            _groupdId = groupId;
             _spriteRenderer.sprite = backgroundLayer.sprite;
             _spriteRenderer.sortingOrder = backgroundLayer.order;
             _movementIsActive = true;

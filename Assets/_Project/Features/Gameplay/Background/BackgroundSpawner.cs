@@ -13,7 +13,7 @@ namespace _Project.Features.Gameplay.Background
 {
     public class BackgroundSpawner : IInitializable, IDisposable
     {
-        private List<LinkedList<BackgroundLayerComponent>> _backgroundGroups;
+        private Dictionary<int, LinkedList<BackgroundLayerComponent>> _backgroundGroups;
         private List<BackgroundLayer> _backgroundLayers;
         private ChunkConfig _chunkConfig;
         private readonly BackgroundLayerComponent _backgroundLayerPrefab;
@@ -51,10 +51,11 @@ namespace _Project.Features.Gameplay.Background
             _signalBus.Subscribe<BackgroundInWarpZoneSignal>(OnBackgroundInWarpZone);
             var backgroundConfig = _configProvider.GetConfigFromScriptableObject<BackgroundConfig>($"Backgrounds/Background{_playerModel.CurrentBackgroundId}");
             _backgroundLayers = backgroundConfig.backgroundLayers;
-            _backgroundGroups = new List<LinkedList<BackgroundLayerComponent>>();
+            _backgroundGroups = new Dictionary<int, LinkedList<BackgroundLayerComponent>>();
+            
             SpawnBackground();
             var firstBackgrounds = new List<BackgroundLayerComponent>();
-            foreach (var group in _backgroundGroups)
+            foreach (var group in _backgroundGroups.Values)
             {
                 firstBackgrounds.Add(group.First.Value);
             }
@@ -70,6 +71,7 @@ namespace _Project.Features.Gameplay.Background
             for (int i = 0; i < _backgroundLayers.Count; i++)
             {
                 var group = new LinkedList<BackgroundLayerComponent>();
+                var groupId = i;
                 int count = _backgroundLayers[i].count;
                 var width = _backgroundLayers[i].sprite.rect.width / _backgroundLayers[i].sprite.pixelsPerUnit;
                 var groupGameObject = _instantiator.CreateEmptyGameObject($"{_backgroundLayers[i].order}");
@@ -80,33 +82,27 @@ namespace _Project.Features.Gameplay.Background
                     var localPos = new Vector3(localPosX, 0f, 0f);
                     var bg = _instantiator.InstantiatePrefabForComponent<BackgroundLayerComponent>(_backgroundLayerPrefab, groupGameObject.transform);
                     bg.transform.localPosition = localPos;
-                    bg.Setup(_backgroundLayers[i]);
                     group.AddLast(bg);
+                    bg.Setup(_backgroundLayers[i], groupId);
                 }
-                _backgroundGroups.Add(group);
+                _backgroundGroups[groupId] = group;
             }
         }
 
         private void OnBackgroundInWarpZone(BackgroundInWarpZoneSignal signal)
         {
             var backgroundToWarp = signal.BackgroundLayerToWarp;
-            LinkedList<BackgroundLayerComponent> backgroundGroup = new LinkedList<BackgroundLayerComponent>();
-            foreach (var group in _backgroundGroups)
-            {
-                if (group.Contains(backgroundToWarp))
-                {
-                    backgroundGroup = group;
-                    break;
-                }
-            }
+            var groupId = backgroundToWarp.GroupId;
+            var group = _backgroundGroups[groupId];
+            
             var width = backgroundToWarp.backgroundLayer.sprite.rect.width / backgroundToWarp.backgroundLayer.sprite.pixelsPerUnit;
-            var lastNode = backgroundGroup.Last;
+            var lastNode = group.Last;
             float lastX = lastNode.Value.transform.localPosition.x;
             float targetX = lastX + width;
             backgroundToWarp.transform.localPosition = new Vector3(targetX, 0f, 0f);
-            backgroundGroup.RemoveFirst();
-            backgroundGroup.AddLast(backgroundToWarp);
-            _signalBus.Fire<FirstBackgroundChangedSignal>(new FirstBackgroundChangedSignal(backgroundGroup.First.Value, backgroundToWarp));
+            group.RemoveFirst();
+            group.AddLast(backgroundToWarp);
+            _signalBus.Fire<FirstBackgroundChangedSignal>(new FirstBackgroundChangedSignal(group.First.Value, backgroundToWarp));
         }
 
         public void Dispose()
