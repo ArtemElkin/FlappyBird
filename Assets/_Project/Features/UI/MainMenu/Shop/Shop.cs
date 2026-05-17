@@ -21,7 +21,7 @@ namespace _Project.Features.UI.MainMenu.Shop
         private readonly BackgroundCardView _backgroundCardView;
         private readonly BuyChooseBackgroundButton _buyChooseBackgroundButton;
         private readonly SignalBus _signalBus;
-        private readonly ResourcesConfigProvider _configProvider;
+        private readonly IConfigProvider _configProvider;
         private readonly ISaveService _saveService;
         private readonly IAdsService _adsService;
 
@@ -30,7 +30,7 @@ namespace _Project.Features.UI.MainMenu.Shop
             BuyChooseBackgroundButton  buyChooseBackgroundButton,
             PlayerModel playerModel,
             SignalBus signalBus,
-            ResourcesConfigProvider configProvider,
+            IConfigProvider configProvider,
             IAdsService adsService)
         {
             _backgroundCardView = backgroundCardView;
