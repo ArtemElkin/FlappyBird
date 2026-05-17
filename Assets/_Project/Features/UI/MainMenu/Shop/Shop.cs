@@ -22,7 +22,6 @@ namespace _Project.Features.UI.MainMenu.Shop
         private readonly BuyChooseBackgroundButton _buyChooseBackgroundButton;
         private readonly SignalBus _signalBus;
         private readonly IConfigProvider _configProvider;
-        private readonly ISaveService _saveService;
         private readonly IAdsService _adsService;
 
         public Shop(
