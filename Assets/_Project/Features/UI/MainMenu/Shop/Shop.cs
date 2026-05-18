@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using _Project.Core.Ads;
 using _Project.Core.Infrastructure.Config;
-using _Project.Core.Infrastructure.Save;
 using _Project.Core.Player;
 using _Project.Features.Gameplay.Background;
 using _Project.Features.UI.MainMenu.Shop.Buttons;
 using _Project.Features.UI.Signals;
-using UnityEngine;
 using Zenject;
 
 
@@ -15,6 +13,9 @@ namespace _Project.Features.UI.MainMenu.Shop
 {
     public class Shop : IInitializable, IDisposable
     {
+        private const string BuyButtonText = "Buy";
+        private const string ChooseButtonText = "Choose";
+        private const string WatchAdButtonText = "Watch Ad";
         private int _currentShownBackgroundId;
         private Dictionary<int, BackgroundConfig> _backgroundConfigs;
         private readonly PlayerModel _playerModel;
@@ -68,7 +69,7 @@ namespace _Project.Features.UI.MainMenu.Shop
             bool isBonus = _backgroundConfigs[_currentShownBackgroundId] is  BonusBackgroundConfig;
             _backgroundCardView.UpdateCard(_backgroundConfigs[_currentShownBackgroundId], unlocked);
             
-            var textOnBtn = unlocked ? "Choose" : (isBonus ? "Watch Ad" : "Buy");
+            var textOnBtn = unlocked ? ChooseButtonText: (isBonus ? WatchAdButtonText : BuyButtonText);
             
             _additionalButton.UpdateText(textOnBtn);
             _additionalButton.gameObject.SetActive(_currentShownBackgroundId != _playerModel.CurrentBackgroundId);
