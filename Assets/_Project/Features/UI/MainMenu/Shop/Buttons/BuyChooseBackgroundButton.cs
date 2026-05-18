@@ -12,7 +12,7 @@ namespace _Project.Features.UI.MainMenu.Shop.Buttons
         
         protected override void OnClick()
         {
-            _signalBus.Fire<BuyChoseBackgroundButtonClickedSignal>();
+            _signalBus.Fire<BuyChooseBackgroundButtonClickedSignal>();
         }
 
         public void UpdateText(string text)

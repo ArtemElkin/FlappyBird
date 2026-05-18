@@ -19,21 +19,22 @@ namespace _Project.Features.UI.MainMenu.Shop
         private Dictionary<int, BackgroundConfig> _backgroundConfigs;
         private readonly PlayerModel _playerModel;
         private readonly BackgroundCardView _backgroundCardView;
-        private readonly BuyChooseBackgroundButton _buyChooseBackgroundButton;
+        private readonly BuyChooseBackgroundButton _additionalButton;
         private readonly SignalBus _signalBus;
         private readonly IConfigProvider _configProvider;
         private readonly IAdsService _adsService;
 
+        
         public Shop(
             BackgroundCardView backgroundCardView,
-            BuyChooseBackgroundButton  buyChooseBackgroundButton,
+            BuyChooseBackgroundButton  additionalButton,
             PlayerModel playerModel,
             SignalBus signalBus,
             IConfigProvider configProvider,
             IAdsService adsService)
         {
             _backgroundCardView = backgroundCardView;
-            _buyChooseBackgroundButton = buyChooseBackgroundButton;
+            _additionalButton = additionalButton;
             _playerModel = playerModel;
             _signalBus = signalBus;
             _configProvider = configProvider;
@@ -44,7 +45,7 @@ namespace _Project.Features.UI.MainMenu.Shop
         {
             _signalBus.Subscribe<NextBackgroundButtonClickedSignal>(OnNextButtonClicked);
             _signalBus.Subscribe<PreviousBackgroundButtonClickedSignal>(OnPreviousButtonClicked);
-            _signalBus.Subscribe<BuyChoseBackgroundButtonClickedSignal>(OnBuyChooseButtonClicked);
+            _signalBus.Subscribe<BuyChooseBackgroundButtonClickedSignal>(OnBuyChooseButtonClicked);
             _currentShownBackgroundId = 0;
             _backgroundConfigs = LoadBackgroundConfigs();
             UpdateCard();
@@ -69,8 +70,8 @@ namespace _Project.Features.UI.MainMenu.Shop
             
             var textOnBtn = unlocked ? "Choose" : (isBonus ? "Watch Ad" : "Buy");
             
-            _buyChooseBackgroundButton.UpdateText(textOnBtn);
-            _buyChooseBackgroundButton.gameObject.SetActive(_currentShownBackgroundId != _playerModel.CurrentBackgroundId);
+            _additionalButton.UpdateText(textOnBtn);
+            _additionalButton.gameObject.SetActive(_currentShownBackgroundId != _playerModel.CurrentBackgroundId);
         }
 
         private void OnNextButtonClicked()
@@ -101,17 +102,17 @@ namespace _Project.Features.UI.MainMenu.Shop
             }
             else if (_backgroundConfigs[_currentShownBackgroundId] is BonusBackgroundConfig)
             {
-                _adsService.ShowRewarded(() =>
-                {
-                    _playerModel.UnlockBackground(_currentShownBackgroundId);
-                    _playerModel.Save();
-                    UpdateCard();
-                });
+                WatchAdToUnlockBackground();
             }
             else
             {
                 BuyCurrentBackground();
             }
+        }
+        
+        private void ChooseCurrentBackground()
+        {
+            _playerModel.SetCurrentBackgroundId(_currentShownBackgroundId);
             UpdateCard();
         }
 
@@ -121,21 +122,25 @@ namespace _Project.Features.UI.MainMenu.Shop
             if (_playerModel.TryRemoveCoins(price))
             {
                 _playerModel.UnlockBackground(_currentShownBackgroundId);
-                Debug.Log("Background bought");
             }
+            UpdateCard();
         }
 
-        private void ChooseCurrentBackground()
+        private void WatchAdToUnlockBackground()
         {
-            _playerModel.SetCurrentBackgroundId(_currentShownBackgroundId);
-            Debug.Log("Background chosen");
+            _adsService.ShowRewarded(() =>
+            {
+                _playerModel.UnlockBackground(_currentShownBackgroundId);
+                _playerModel.Save();
+                UpdateCard();
+            });
         }
 
         public void Dispose()
         {
             _signalBus.Unsubscribe<NextBackgroundButtonClickedSignal>(OnNextButtonClicked);
             _signalBus.Unsubscribe<PreviousBackgroundButtonClickedSignal>(OnPreviousButtonClicked);
-            _signalBus.Unsubscribe<BuyChoseBackgroundButtonClickedSignal>(OnBuyChooseButtonClicked);
+            _signalBus.Unsubscribe<BuyChooseBackgroundButtonClickedSignal>(OnBuyChooseButtonClicked);
         }
     }
 }

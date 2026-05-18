@@ -14,7 +14,7 @@ namespace _Project.Features.UI.MainMenu.Shop
         
         public override void InstallBindings()
         {
-            Container.DeclareSignal<BuyChoseBackgroundButtonClickedSignal>();
+            Container.DeclareSignal<BuyChooseBackgroundButtonClickedSignal>();
             Container.DeclareSignal<NextBackgroundButtonClickedSignal>();
             Container.DeclareSignal<PreviousBackgroundButtonClickedSignal>();
             

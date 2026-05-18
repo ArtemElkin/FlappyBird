@@ -1,6 +1,6 @@
 namespace _Project.Features.UI.Signals
 {
-    public class BuyChoseBackgroundButtonClickedSignal
+    public class BuyChooseBackgroundButtonClickedSignal
     {
         
     }
