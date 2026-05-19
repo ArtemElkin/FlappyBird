@@ -1,37 +1,13 @@
 using _Project.Core.Signals;
-using UnityEngine;
-using UnityEngine.UI;
-using Zenject;
 
 
 namespace _Project.Features.UI.MainMenu
 {
-    public class PlayButton : MonoBehaviour
+    public class PlayButton : BaseButton
     {
-        private Button _button;
-        private SignalBus _signalBus;
-        
-        
-        private void OnEnable()
-        {
-            _button.onClick.AddListener(OnButtonClick);
-        }
-
-        [Inject]
-        private void Construct(SignalBus signalBus)
-        {
-            _signalBus = signalBus;
-            _button = GetComponent<Button>();
-        }
-
-        private void OnButtonClick()
+        protected override void OnClick()
         {
             _signalBus.Fire<StartGameClickedSignal>();
-        }
-
-        private void OnDisable()
-        {
-            _button.onClick.RemoveAllListeners();
         }
     }
 }
