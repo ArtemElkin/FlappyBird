@@ -9,7 +9,6 @@ namespace _Project.Features.Gameplay.Background
     public class BackgroundInstaller : MonoInstaller
     {
         [SerializeField] private BackgroundLayerComponent _backgroundLayerPrefab;
-        [SerializeField] private List<BackgroundLayer> _backgrounds;
         [SerializeField] private Transform _backgroundParentTransform;
 
         
@@ -19,6 +18,7 @@ namespace _Project.Features.Gameplay.Background
             Container.DeclareSignal<FirstBackgroundChangedSignal>();
             
             BindBackgroundmMovementCalculator();
+            BindBackgroundFactory(_backgroundLayerPrefab, _backgroundParentTransform);
             BindBackgroundSpawner();
             BindBackgroundWarper();
         }
@@ -29,12 +29,19 @@ namespace _Project.Features.Gameplay.Background
                 .Bind<BackgroundMovementCalculator>()
                 .AsSingle();
         }
+
+        private void BindBackgroundFactory(BackgroundLayerComponent backgroundLayerPrefab, Transform backgroundParentTransform)
+        {
+            Container
+                .BindInterfacesAndSelfTo<BackgroundFactory>()
+                .AsSingle()
+                .WithArguments(backgroundLayerPrefab, backgroundParentTransform);
+        }
         private void BindBackgroundSpawner()
         {
             Container
                 .BindInterfacesAndSelfTo<BackgroundSpawner>()
-                .AsSingle()
-                .WithArguments(_backgroundLayerPrefab, _backgroundParentTransform);
+                .AsSingle();
         }
 
         private void BindBackgroundWarper()

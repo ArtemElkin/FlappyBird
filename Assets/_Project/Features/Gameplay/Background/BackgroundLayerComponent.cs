@@ -8,7 +8,7 @@ namespace _Project.Features.Gameplay.Background
 {
     public class BackgroundLayerComponent : MonoBehaviour
     {
-        public BackgroundLayer backgroundLayer;
+        public BackgroundLayer Layer { get; private set; }
         private bool _isSetup;
         private int _groupdId;
         private bool _movementIsActive;
@@ -29,7 +29,7 @@ namespace _Project.Features.Gameplay.Background
         {
             if (!_isSetup) return;
             if (!_movementIsActive)  return;
-            var newPos = _movementCalculator.CalculateNewPosition(transform.localPosition, backgroundLayer.speed,Time.fixedDeltaTime);
+            var newPos = _movementCalculator.CalculateNewPosition(transform.localPosition, Layer.speed,Time.fixedDeltaTime);
             transform.localPosition = newPos;
         }
 
@@ -41,12 +41,12 @@ namespace _Project.Features.Gameplay.Background
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
-        public void Setup(BackgroundLayer backgroundLayerConfig, int groupId)
+        public void Setup(BackgroundLayer backgroundLayer, int groupId)
         {
-            backgroundLayer = backgroundLayerConfig;
+            Layer = backgroundLayer;
             _groupdId = groupId;
-            _spriteRenderer.sprite = backgroundLayer.sprite;
-            _spriteRenderer.sortingOrder = backgroundLayer.order;
+            _spriteRenderer.sprite = Layer.sprite;
+            _spriteRenderer.sortingOrder = Layer.order;
             _isSetup = true;
         }
 

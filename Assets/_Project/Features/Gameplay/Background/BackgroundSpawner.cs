@@ -16,44 +16,48 @@ namespace _Project.Features.Gameplay.Background
         private Dictionary<int, LinkedList<BackgroundLayerComponent>> _backgroundGroups;
         private List<BackgroundLayer> _backgroundLayers;
         private ChunkConfig _chunkConfig;
-        private readonly BackgroundLayerComponent _backgroundLayerPrefab;
-        private readonly Transform _parentTransform;
         private readonly BackgroundWarper _backgroundWarper;
         private readonly PlayerModel _playerModel;
         private readonly IConfigProvider _configProvider;
-        private readonly IInstantiator _instantiator;
         private readonly SignalBus _signalBus;
         private readonly ScreenBoundsCalculator _screenBoundsCalculator;
+        private readonly BackgroundFactory _backgroundFactory;
 
         
         public BackgroundSpawner(
             IConfigProvider configProvider,
-            IInstantiator instantiator,
             SignalBus signalBus,
-            BackgroundLayerComponent backgroundLayerPrefab,
-            Transform parentTransform,
             BackgroundWarper backgroundWarper,
             PlayerModel playerModel,
-            ScreenBoundsCalculator screenBoundsCalculator)
+            ScreenBoundsCalculator screenBoundsCalculator,
+            BackgroundFactory backgroundFactory)
         {
             _configProvider = configProvider;
-            _instantiator = instantiator;
             _signalBus = signalBus;
-            _backgroundLayerPrefab =  backgroundLayerPrefab;
-            _parentTransform = parentTransform;
             _backgroundWarper = backgroundWarper;
             _playerModel = playerModel;
             _screenBoundsCalculator = screenBoundsCalculator;
+            _backgroundFactory = backgroundFactory;
         }
         
         public void Initialize()
         {
             _signalBus.Subscribe<BackgroundInWarpZoneSignal>(OnBackgroundInWarpZone);
+            
+            SetupSpawner();
+            SpawnBackground();
+            SetupWarper();
+        }
+
+        private void SetupSpawner()
+        {
             var backgroundConfig = _configProvider.GetConfigFromScriptableObject<BackgroundConfig>($"Backgrounds/Background{_playerModel.CurrentBackgroundId}");
             _backgroundLayers = backgroundConfig.backgroundLayers;
             _backgroundGroups = new Dictionary<int, LinkedList<BackgroundLayerComponent>>();
-            
-            SpawnBackground();
+        }
+
+        private void SetupWarper()
+        {
             var firstBackgrounds = new List<BackgroundLayerComponent>();
             foreach (var group in _backgroundGroups.Values)
             {
@@ -70,21 +74,8 @@ namespace _Project.Features.Gameplay.Background
         {
             for (int i = 0; i < _backgroundLayers.Count; i++)
             {
-                var group = new LinkedList<BackgroundLayerComponent>();
                 var groupId = i;
-                int count = _backgroundLayers[i].count;
-                var width = _backgroundLayers[i].sprite.rect.width / _backgroundLayers[i].sprite.pixelsPerUnit;
-                var groupGameObject = _instantiator.CreateEmptyGameObject($"{_backgroundLayers[i].order}");
-                groupGameObject.transform.SetParent(_parentTransform);
-                for (int j = 0; j < count; j++)
-                {
-                    var localPosX = j *  width;
-                    var localPos = new Vector3(localPosX, 0f, 0f);
-                    var bg = _instantiator.InstantiatePrefabForComponent<BackgroundLayerComponent>(_backgroundLayerPrefab, groupGameObject.transform);
-                    bg.transform.localPosition = localPos;
-                    group.AddLast(bg);
-                    bg.Setup(_backgroundLayers[i], groupId);
-                }
+                var group = _backgroundFactory.CreateGroup(_backgroundLayers[i], groupId);
                 _backgroundGroups[groupId] = group;
             }
         }
@@ -95,7 +86,7 @@ namespace _Project.Features.Gameplay.Background
             var groupId = backgroundToWarp.GroupId;
             var group = _backgroundGroups[groupId];
             
-            var width = backgroundToWarp.backgroundLayer.sprite.rect.width / backgroundToWarp.backgroundLayer.sprite.pixelsPerUnit;
+            var width = backgroundToWarp.Layer.sprite.rect.width / backgroundToWarp.Layer.sprite.pixelsPerUnit;
             var lastNode = group.Last;
             float lastX = lastNode.Value.transform.localPosition.x;
             float targetX = lastX + width;
