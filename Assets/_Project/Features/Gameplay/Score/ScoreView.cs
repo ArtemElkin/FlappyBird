@@ -8,7 +8,7 @@ namespace _Project.Features.Gameplay.Score
 {
     public class ScoreView : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _scoreText;
+        private TextMeshProUGUI _scoreText;
         private PlayerModel _playerModel;
 
         
