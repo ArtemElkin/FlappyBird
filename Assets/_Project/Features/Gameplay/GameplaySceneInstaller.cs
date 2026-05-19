@@ -14,6 +14,7 @@ namespace _Project.Features.Gameplay
         {
             BindScreenBoundsCalculator(_camera);
             BindGameplayAdsController();
+            BindGameplayStarter();
         }
         
         private void BindScreenBoundsCalculator(Camera mainCamera)
@@ -28,6 +29,13 @@ namespace _Project.Features.Gameplay
         {
             Container
                 .BindInterfacesAndSelfTo<GameplayAdsController>()
+                .AsSingle();
+        }
+
+        private void BindGameplayStarter()
+        {
+            Container
+                .BindInterfacesAndSelfTo<GameplayStarter>()
                 .AsSingle();
         }
     }

@@ -36,6 +36,7 @@ namespace _Project.Features.Gameplay.Bird.States
         {
             var t = Mathf.InverseLerp(_minVelocityY, _maxVelocityY, _currentVelocityY);
             var newRotation = Quaternion.Lerp(_minRotation, _maxRotation, t);
+            newRotation = Quaternion.Lerp(currentRotation, newRotation, 0.6f);
             return newRotation;
         }
 

@@ -12,6 +12,7 @@ namespace _Project.Features.Gameplay.Chunk
 {
     public class ChunkComponent : MonoBehaviour
     {
+        private bool _isSetup;
         private float _moveSpeed;
         public List<CoinComponent> Coins => _coins;
         public List<PipePairComponent> PipePairs => _pipePairs;
@@ -31,6 +32,7 @@ namespace _Project.Features.Gameplay.Chunk
         
         private void FixedUpdate()
         {
+            if (!_isSetup) return;
             if (!_movementIsActive) return;
             var newPos = _movementCalculator.CalculateNewPosition(transform.localPosition, _moveSpeed,Time.fixedDeltaTime);
             _rb.MovePosition(newPos);
@@ -51,6 +53,7 @@ namespace _Project.Features.Gameplay.Chunk
             _moveSpeed = moveSpeed;
             _pipePairs = pipePairs;
             _coins = coins;
+            _isSetup = true;
         }
 
         private void ActivateMovement() => _movementIsActive = true;

@@ -31,6 +31,7 @@ namespace _Project.Features.Gameplay.Bird
         
         public void Initialize()
         {
+            _signalBus.Subscribe<GameStartedSignal>(OnGameStarted);
             _signalBus.Subscribe<GameOverSignal>(OnGameOver);
             _signalBus.Subscribe<GameRestartedSignal>(OnGameRestarted);
             _inputService.JumpPressed += Jump;
@@ -84,7 +85,12 @@ namespace _Project.Features.Gameplay.Bird
             _birdTransform.localRotation = Quaternion.identity;
             _rb.velocity = Vector2.zero;
             _rb.angularVelocity = 0f;
+        }
+
+        private void OnGameStarted()
+        {
             _isMoving = true;
+            Reset();
             _birdStateMachine.EnterState<GlidingState>();
         }
 
@@ -103,6 +109,7 @@ namespace _Project.Features.Gameplay.Bird
         public void Dispose()
         {
             _inputService.JumpPressed -= Jump;
+            _signalBus.Unsubscribe<GameStartedSignal>(OnGameStarted);
             _signalBus.Unsubscribe<GameOverSignal>(OnGameOver);
             _signalBus.Unsubscribe<GameRestartedSignal>(OnGameRestarted);
         }

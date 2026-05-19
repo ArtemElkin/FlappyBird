@@ -777,6 +777,7 @@ GameObject:
   - component: {fileID: 710336579}
   - component: {fileID: 710336580}
   - component: {fileID: 710336581}
+  - component: {fileID: 710336584}
   m_Layer: 0
   m_Name: SceneContext
   m_TagString: Untagged
@@ -944,6 +945,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 1054700783}
+--- !u!114 &710336584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710336573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 782004422b1447c0842538bad2ab02b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &867582009
 GameObject:
   m_ObjectHideFlags: 0
@@ -1608,7 +1621,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a25f1af16134b03a6ceafdedcd58e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scoreText: {fileID: 1258445273}
 --- !u!1 &1367679013
 GameObject:
   m_ObjectHideFlags: 0

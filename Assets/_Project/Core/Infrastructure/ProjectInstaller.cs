@@ -19,6 +19,7 @@ namespace _Project.Core.Infrastructure
         public override void InstallBindings()
         {
             BindSignalBus();
+            Container.DeclareSignal<GameStartedSignal>();
             Container.DeclareSignal<GameOverSignal>();
             Container.DeclareSignal<GameRestartedSignal>();
             Container.DeclareSignal<StartGameClickedSignal>();
