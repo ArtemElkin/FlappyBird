@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 
 namespace _Project.Core.Infrastructure.Config
@@ -14,45 +13,40 @@ namespace _Project.Core.Infrastructure.Config
             TextAsset jsonConfig = Resources.Load<TextAsset>(path);
             if (jsonConfig == null)
             {
-                Debug.LogError($"Config file \"{path}\" could not be found."); ;
+                Debug.LogError($"Config file \"{path}\" could not be found.");
+                return default;
             }
-            T config = JsonConvert.DeserializeObject<T>(jsonConfig.ToString());
+            try
+            {
+                T config = JsonConvert.DeserializeObject<T>(jsonConfig.text);
+                return config;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Config file \"{path}\" could not be deserialized.");
+                return default;
+            }
+        }
+
+        public T GetConfigFromScriptableObject<T>(string path) where T : ScriptableObject, IConfig
+        {
+            var config = Resources.Load<T>(path);
+            if (config == null)
+            {
+                Debug.LogError($"Config file \"{path}\" could not be found.");
+                return null;
+            }
             return config;
         }
 
-        public List<T> GetConfigsFromJson<T>(string path) where T : IConfig
+        public List<T> GetConfigsFromScriptableObjects<T>(string path) where T : ScriptableObject, IConfig
         {
-            throw new NotImplementedException();
-        }
-
-        public T GetConfigFromScriptableObject<T>(string path) where T : IConfig
-        {
-            Object asset = Resources.Load(path);
-
-            if (asset == null)
+            var configs = Resources.LoadAll<T>(path);
+            if (configs.Length == 0)
             {
-                return default;
+                Debug.LogError($"Config files could not be found in \"{path}\"");
             }
-
-            if (asset is T config)
-            {
-                return config;
-            }
-            return default;
-        }
-
-        public List<T> GetConfigsFromScriptableObjects<T>(string path) where T : IConfig
-        {
-            var assets = Resources.LoadAll(path);
-            var configs = new List<T>();
-            foreach (var asset in assets)
-            {
-                if (asset is T config)
-                {
-                    configs.Add(config);
-                }
-            }
-            return configs;
+            return new List<T>(configs);
         }
     }
 }
