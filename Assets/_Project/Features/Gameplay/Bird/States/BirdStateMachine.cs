@@ -1,19 +1,38 @@
 using System;
 using System.Collections.Generic;
+using _Project.Core.Infrastructure.Config;
+using Zenject;
 
 
 namespace _Project.Features.Gameplay.Bird.States
 {
-    public class BirdStateMachine
+    public class BirdStateMachine : IInitializable
     {
-        private readonly Dictionary<Type, IState> _states = new();
         public IState ActiveState { get; private set; }
+        private readonly Dictionary<Type, IState> _states = new();
+        private readonly IConfigProvider _configProvider;        
         
-        
-        public BirdStateMachine()
+        public BirdStateMachine(IConfigProvider  configProvider)
         {
-            _states[typeof(GlidingState)] = new GlidingState();
-            _states[typeof(FlyingState)] = new FlyingState();
+            _configProvider = configProvider;
+        }
+
+        public void Initialize()
+        {
+            var config = _configProvider.GetConfigFromJson<BirdMovementConfig>("BirdMovementConfig");
+            _states[typeof(GlidingState)] = new GlidingState(
+                config.minRotationZ, 
+                config.maxRotationZ, 
+                config.minVelocityY, 
+                config.maxVelocityY,
+                config.glideSpeed,
+                config.glideAmount);
+            _states[typeof(FlyingState)] = new FlyingState(
+                config.minRotationZ,
+                config.maxRotationZ,
+                config.minVelocityY,
+                config.maxVelocityY,
+                config.jumpForce);
         }
         
         public void EnterState<T>() where T : class, IState

@@ -3,25 +3,18 @@ using UnityEngine;
 
 namespace _Project.Features.Gameplay.Bird.States
 {
-    public class FlyingState : IJumpableState
+    public class FlyingState : BaseBirdMovementState, IJumpableState
     {
-        private const float JumpForce = 3.5f;
-        private const float MinRotationZ = -50f;
-        private const float MaxRotationZ = 50f;
-        private const float MinVelocityY = -5f;
-        private const float MaxVelocityY = 5f;
-        private float _currentVelocityY;
-        private Quaternion _minRotation;
-        private Quaternion _maxRotation;
+        private readonly float _jumpForce;
+
         
-        public void Enter()
+        public FlyingState(float minRotationZ, float maxRotationZ, float minVelocityY, float maxVelocityY, float jumpForce)
+            : base(minRotationZ, maxRotationZ, minVelocityY, maxVelocityY)
         {
-            _currentVelocityY = 0f;
-            _minRotation = Quaternion.Euler(0, 0, MinRotationZ);
-            _maxRotation = Quaternion.Euler(0, 0, MaxRotationZ);
+            _jumpForce = jumpForce;
         }
 
-        public Vector3 CalculateNewLocalPosition(Vector3 currentPos, float fixedDeltaTime)
+        public override Vector3 CalculateNewLocalPosition(Vector3 currentPos, float fixedDeltaTime)
         {
             var posY = currentPos.y;
             // Y = y0 + v0t - gt^2/2
@@ -30,22 +23,9 @@ namespace _Project.Features.Gameplay.Bird.States
             return new Vector3(currentPos.x, newY, currentPos.z);
         }
 
-        public Quaternion CalculateNewLocalRotation(Quaternion currentRotation, float fixedDeltaTime)
-        {
-            var t = Mathf.InverseLerp(MinVelocityY, MaxVelocityY, _currentVelocityY);
-            var newRotation = Quaternion.Lerp(_minRotation, _maxRotation, t);
-            newRotation = Quaternion.Lerp(currentRotation, newRotation, 0.5f);
-            return newRotation;
-        }
-
         public void Jump()
         {
-            _currentVelocityY = JumpForce;
-        }
-
-        public void Exit()
-        {
-            
+            _currentVelocityY = _jumpForce;
         }
     }
 }

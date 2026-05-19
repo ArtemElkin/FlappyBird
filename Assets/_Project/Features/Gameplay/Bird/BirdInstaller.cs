@@ -16,7 +16,7 @@ namespace _Project.Features.Gameplay.Bird
             Container.DeclareSignal<BirdActivatedSignal>();
             Container.DeclareSignal<GapPassedSignal>();
             
-            Container.Bind<BirdStateMachine>().AsSingle();
+            Container.BindInterfacesAndSelfTo<BirdStateMachine>().AsSingle();
             
             BindBirdMovementController();
             BindBirdSpawner(_birdPrefab);

@@ -1,0 +1,9 @@
+{
+  "minRotationZ" : -50.0,
+  "maxRotationZ" : 50.0,
+  "minVelocityY" : -5.0,
+  "maxVelocityY" : 5.0,
+  "jumpForce" : 3.5,
+  "glideSpeed" : 1.5,
+  "glideAmount" : 1.5
+}
