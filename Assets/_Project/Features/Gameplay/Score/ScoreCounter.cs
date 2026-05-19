@@ -11,12 +11,14 @@ namespace _Project.Features.Gameplay.Score
     {
         private readonly PlayerModel _playerModel;
         private readonly SignalBus _signalBus;
+        private readonly PlayerSaveController _playerSaveController;
 
         
-        public ScoreCounter(PlayerModel playerModel, SignalBus signalBus)
+        public ScoreCounter(PlayerModel playerModel, SignalBus signalBus, PlayerSaveController playerSaveController)
         {
             _playerModel = playerModel;
             _signalBus = signalBus;
+            _playerSaveController = playerSaveController;
         }
 
         public void Initialize()
@@ -37,7 +39,7 @@ namespace _Project.Features.Gameplay.Score
         private void OnGameOver()
         {
             _playerModel.TryUpdateMaxScore(_playerModel.CurrentScore);
-            _playerModel.Save();
+            _playerSaveController.SaveProgress();
             
         }
 

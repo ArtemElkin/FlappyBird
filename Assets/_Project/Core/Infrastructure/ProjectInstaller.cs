@@ -27,6 +27,7 @@ namespace _Project.Core.Infrastructure
             BindSaveService();
             BindConfigProviders();
             BindPlayerModel();
+            BindPlayerSaveController();
             BindInput();
             BindSceneLoadService();
             BindSceneLoader();
@@ -57,6 +58,13 @@ namespace _Project.Core.Infrastructure
         {
             Container
                 .BindInterfacesAndSelfTo<PlayerModel>()
+                .AsSingle();
+        }
+
+        public void BindPlayerSaveController()
+        {
+            Container
+                .Bind<PlayerSaveController>()
                 .AsSingle();
         }
 

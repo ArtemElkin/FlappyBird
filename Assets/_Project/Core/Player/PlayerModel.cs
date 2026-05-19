@@ -11,8 +11,7 @@ namespace _Project.Core.Player
         public event Action<int> OnCurrentScoreChanged;
         public event Action<int> OnCoinsChanged;
         private int _currentScore;
-        private PlayerSave _playerSave;
-        private readonly ISaveService _saveService;
+        private PlayerSave _playerSave = new();
         public int MaxScore => _playerSave.maxScore;
         public int Coins =>  _playerSave.coins;
         public int CurrentScore
@@ -28,14 +27,8 @@ namespace _Project.Core.Player
             }
         }
         public int CurrentBackgroundId => _playerSave.currentBackgroundId;
-        public List<int> UnlockedBackgroundIds => _playerSave.unlockedBackgroundIds;
+        public IReadOnlyList<int> UnlockedBackgroundIds => _playerSave.unlockedBackgroundIds;
 
-
-        public PlayerModel(ISaveService saveService)
-        {
-            _saveService = saveService;
-            _playerSave = new PlayerSave();
-        }
 
         public void Initialize()
         {
@@ -84,14 +77,15 @@ namespace _Project.Core.Player
 
         public void UnlockBackground(int backgroundId)
         {
-            _playerSave.unlockedBackgroundIds.Add(backgroundId);
+            if (!_playerSave.unlockedBackgroundIds.Contains(backgroundId))
+            {
+                _playerSave.unlockedBackgroundIds.Add(backgroundId);
+            }
         }
 
-        public void Save()
-        {
-            _saveService.Save(_playerSave);
-        }
-        public void Load(PlayerSave playerSave)
+        public PlayerSave GetSave() => _playerSave;
+
+        public void SetSave(PlayerSave playerSave)
         {
             _playerSave = playerSave;
         }

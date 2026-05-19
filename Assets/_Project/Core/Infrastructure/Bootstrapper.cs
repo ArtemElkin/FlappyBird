@@ -35,7 +35,7 @@ namespace _Project.Core.Infrastructure
             var playerSave = _saveService.Load<PlayerSave>();
             if (playerSave != null)
             {
-                _playerModel.Load(playerSave);
+                _playerModel.SetSave(playerSave);
             }
 
             var adsConfig = _configProvider.GetConfigFromJson<AdUnitsIdsConfig>("AdUnitsIdsConfig");

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using _Project.Core.Ads;
 using _Project.Core.Infrastructure.Config;
 using _Project.Core.Player;
@@ -24,6 +25,7 @@ namespace _Project.Features.UI.MainMenu.Shop
         private readonly SignalBus _signalBus;
         private readonly IConfigProvider _configProvider;
         private readonly IAdsService _adsService;
+        private readonly PlayerSaveController _playerSaveController;
 
         
         public Shop(
@@ -32,7 +34,8 @@ namespace _Project.Features.UI.MainMenu.Shop
             PlayerModel playerModel,
             SignalBus signalBus,
             IConfigProvider configProvider,
-            IAdsService adsService)
+            IAdsService adsService,
+            PlayerSaveController playerSaveController)
         {
             _backgroundCardView = backgroundCardView;
             _additionalButton = additionalButton;
@@ -40,6 +43,7 @@ namespace _Project.Features.UI.MainMenu.Shop
             _signalBus = signalBus;
             _configProvider = configProvider;
             _adsService = adsService;
+            _playerSaveController = playerSaveController;
         }
         
         public void Initialize()
@@ -123,6 +127,7 @@ namespace _Project.Features.UI.MainMenu.Shop
             if (_playerModel.TryRemoveCoins(price))
             {
                 _playerModel.UnlockBackground(_currentShownBackgroundId);
+                _playerSaveController.SaveProgress();
             }
             UpdateCard();
         }
@@ -132,7 +137,7 @@ namespace _Project.Features.UI.MainMenu.Shop
             _adsService.ShowRewarded(() =>
             {
                 _playerModel.UnlockBackground(_currentShownBackgroundId);
-                _playerModel.Save();
+                _playerSaveController.SaveProgress();
                 UpdateCard();
             });
         }
